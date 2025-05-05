@@ -1,0 +1,25 @@
+{
+    "name": "matteomcr/gestion-conge-employe",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Matteomcr\\GestionCongeEmploye\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "MATTEO-MCR",
+            "email": "matteo.mcr@eduge.ch"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "slim/slim": "4.*",
+        "slim/psr7": "^1.7",
+        "nyholm/psr7": "^1.8",
+        "nyholm/psr7-server": "^1.1",
+        "guzzlehttp/psr7": "^2",
+        "laminas/laminas-diactoros": "^3.5",
+        "slim/php-view": "^3.4"
+    }
+}
