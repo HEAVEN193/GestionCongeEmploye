@@ -6,6 +6,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 use Matteomcr\GestionCongeEmploye\Models\Database;
+use Matteomcr\GestionCongeEmploye\Models\Role;
+use Matteomcr\GestionCongeEmploye\Models\Departement;
+
+
 
 
 
@@ -43,6 +47,18 @@ class Employe
 
     public $idDepartement;
 
+    protected $role = null;
+
+    protected $departement = null;
+
+
+    public static function fetchAll() :array
+    {
+        $statement = Database::connection()->prepare("SELECT * FROM EMPLOYES");
+        $statement->execute();
+        $statement->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
+        return $statement->fetchAll();
+    }
 
 
     /**
@@ -60,14 +76,85 @@ class Employe
         return $statement->fetch();
     }
 
-    /**
-     * Récupère l'employe actuellement connecté.
-     * 
-     * Cette méthode utilise la session pour déterminer si un utilisateur est connecté.
-     * Si un utilisateur est trouvé via son adresse email, il est retourné.
-     * 
-     * @return Employe|null Retourne l'utilisateur actuel ou null s'il n'est pas connecté.
-     */
+    public static function create($nom, $prenom, $pseudo, $mdp, $email, $dateEmbauche, $statut, $idrole, $iddepartement)
+    {
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("INSERT INTO EMPLOYES (Nom, Prenom, Pseudo, MotDePasse, Email, DateEmbauche, Statut, idRole, idDepartement)
+                                   VALUES (:nom, :prenom, :pseudo, :mdp, :email, :dateEmbauche, :statut, :idrole, :iddepartement)");
+    
+            // Hasher le mot de passe
+            $hashedPassword = password_hash($mdp, PASSWORD_DEFAULT);
+    
+            // Liaison des paramètres
+            $stmt->bindParam(':nom', $nom);
+            $stmt->bindParam(':prenom', $prenom);
+            $stmt->bindParam(':pseudo', $pseudo);
+            $stmt->bindParam(':mdp', $hashedPassword); // <- ici on met bien le mot de passe hashé
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':dateEmbauche', $dateEmbauche);
+            $stmt->bindParam(':statut', $statut);
+            $stmt->bindParam(':idrole', $idrole);
+            $stmt->bindParam(':iddepartement', $iddepartement);
+    
+            // Exécution
+            $stmt->execute();
+    
+            return $pdo->lastInsertId();
+        } catch (\Exception $e) {
+            throw new \Exception("Une erreur est survenue lors de la création du compte : " . $e->getMessage());
+        }
+    }
+    
+
+    public static function update($id, $nom, $prenom, $pseudo, $mdp, $email, $dateEmbauche, $statut, $idrole, $iddepartement)
+    {
+        try {
+            $pdo = Database::connection();
+    
+            // Hasher le nouveau mot de passe
+            $hashedPassword = password_hash($mdp, PASSWORD_DEFAULT);
+    
+            $stmt = $pdo->prepare("UPDATE EMPLOYES SET
+                Nom = :nom,
+                Prenom = :prenom,
+                Pseudo = :pseudo,
+                MotDePasse = :mdp,
+                Email = :email,
+                DateEmbauche = :dateEmbauche,
+                Statut = :statut,
+                idRole = :idrole,
+                idDepartement = :iddepartement
+                WHERE idEmploye = :id");
+    
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':nom', $nom);
+            $stmt->bindParam(':prenom', $prenom);
+            $stmt->bindParam(':pseudo', $pseudo);
+            $stmt->bindParam(':mdp', $hashedPassword);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':dateEmbauche', $dateEmbauche);
+            $stmt->bindParam(':statut', $statut);
+            $stmt->bindParam(':idrole', $idrole);
+            $stmt->bindParam(':iddepartement', $iddepartement);
+    
+            $stmt->execute();
+    
+            return true;
+        } catch (\Exception $e) {
+            throw new \Exception("Une erreur est survenue lors de la mise à jour de l'employé : " . $e->getMessage());
+        }
+    }
+
+    public static function delete($employeId) {
+        $pdo = Database::connection();
+        $statement = $pdo->prepare("DELETE FROM EMPLOYES WHERE idEmploye = ?");
+        $statement->execute([$employeId]);
+    }
+    
+
+
+    
     public static function current(): Employe|null
     {
         static $current = null;
@@ -84,11 +171,6 @@ class Employe
         return $current;
     }
 
-    /**
-     * Récupère le role de l'utilisateur.
-     * 
-     * @return Role|null Le role ou null si aucun role n'est trouvée.
-     */
     public function getRole() : Role|null
     {
         if(!$this->role){
@@ -97,18 +179,17 @@ class Employe
         return $this->role;
     }
 
+    public function getDepartement() : Departement|null
+    {
+        if(!$this->departement){
+            $this->departement = $this->idDepartement ? Departement::fetchById($this->idDepartement) : null;
+        }
+        return $this->departement;
+    }
 
 
 
-    /**
-     * Connecte un employe en vérifiant son email et mot de passe.
-     * 
-     * @param string $email L'adresse email de l'utilisateur.
-     * @param string $password Le mot de passe de l'utilisateur.
-     * 
-     * @return array Les informations de l'utilisateur connecté.
-     * @throws \Exception Si l'email ou le mot de passe est incorrect.
-     */
+
     public static function login($email, $password)
     {
         $pdo = Database::connection();

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/login-page.css">
   <title>Connexion</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
@@ -41,14 +42,13 @@
             <button type="submit" class="btn btn-primary">Se connecter</button>
           </div>
         </form>
-        <p class="text-center mt-3 mb-0">
+        
           <?php
             if(isset($_SESSION['error'])){
-                echo $_SESSION['error'];
+                echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';
                 unset($_SESSION['error']); 
             } 
         ?>
-        </p>
       </div>
     </div>
   </div>

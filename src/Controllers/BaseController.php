@@ -13,6 +13,6 @@ abstract class BaseController
             'title' => 'Slimages',
         ]);
 
-        // $this->view->setLayout("layout.php");
+        $this->view->setLayout("layout.php");
     }
 }
