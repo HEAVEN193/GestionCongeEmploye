@@ -60,6 +60,15 @@ class Employe
         return $statement->fetchAll();
     }
 
+    public static function fetchById(int $id) :Employe|false
+    {
+        $statement = Database::connection()
+        ->prepare("SELECT * FROM EMPLOYES WHERE idEmploye = :id");
+        $statement->execute([':id' => $id]);
+        $statement->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
+        return $statement->fetch();
+    }
+
 
     /**
      * Récupère un employe en fonction de son adresse email.

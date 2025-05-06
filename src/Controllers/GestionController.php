@@ -37,23 +37,21 @@ class GestionController extends BaseController {
     }
 
 
-    public function update(ServerRequestInterface $request, ResponseInterface $response, array $args) {
-        $userId = $args['id'];
-        $lastName = filter_input(INPUT_POST, 'lastName', FILTER_SANITIZE_STRING);
-        $firstName = filter_input(INPUT_POST, 'firstName', FILTER_SANITIZE_STRING);
+    public function updateEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $employeId = $args['id'];
+        $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_STRING);
+        $prenom = filter_input(INPUT_POST, 'prenom', FILTER_SANITIZE_STRING);
         $pseudo = filter_input(INPUT_POST, 'pseudo', FILTER_SANITIZE_STRING);
-        $birthdate = filter_input(INPUT_POST, 'birthdate', FILTER_SANITIZE_STRING);     
-        $idCity = $_POST['city'] ?? 0;            
-        $activities = $_POST['activity'] ?? []; 
+        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);  
+        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);     
+        $dateEmbauche = $_POST['dateEmbauche'] ?? 0;            
+        $statut = $_POST['statut'] ?? [];
+        $idRole = $_POST['role'] ?? [];
+        $idDepartement = $_POST['departement'] ?? [];
 
-        User::update($pseudo, $lastName, $firstName, $birthdate, $idCity, $userId);
-        Practice::delete($userId);
+        Employe::update($employeId, $nom, $prenom, $pseudo, $password, $email, $dateEmbauche, $statut, $idRole, $idDepartement);
 
-        foreach ($activities as $activityId) {
-            Practice::insert($userId, $activityId);
-        }
-
-        header('Location: /');
+        header('Location: /showEmploye');
         exit;
 
     }

@@ -112,25 +112,25 @@
 
           <!-- Recent Requests -->
           <div class="col-md-4">
-            <h5>Recent Leave Requests</h5>
+            <h5>Demande de congés récentes</h5>
             <ul class="list-group">
               <li class="list-group-item">
-                <strong>Personal Leave</strong><br>
+                <strong>Conversion heure supp</strong><br>
                 Mar 10, 2025 – Mar 10, 2025<br>
-                <span class="event-badge badge-rejected">Rejected</span>
-                <small class="d-block text-muted">High workload during this period</small>
+                <span class="event-badge badge-rejected">Refusé</span>
+                <small class="d-block text-muted">beaucoup travaillé cette période</small>
               </li>
               <li class="list-group-item">
-                <strong>Personal Leave</strong><br>
+                <strong>Vacances</strong><br>
                 Feb 1, 2025 – Feb 5, 2025<br>
-                <span class="event-badge badge-pending">Pending</span>
-                <small class="d-block text-muted">Family event</small>
+                <span class="event-badge badge-pending">En attente</span>
+                <small class="d-block text-muted">Evénement famillial</small>
               </li>
               <li class="list-group-item">
-                <strong>Vacation Leave</strong><br>
+                <strong>Vacances</strong><br>
                 Jan 15, 2025 – Jan 20, 2025<br>
-                <span class="event-badge badge-approved">Approved</span>
-                <small class="d-block text-muted">Approved as requested</small>
+                <span class="event-badge badge-approved">Accepté</span>
+                <small class="d-block text-muted">Requêtes accépté</small>
               </li>
             </ul>
           </div>

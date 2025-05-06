@@ -14,8 +14,8 @@ h1 {
 
 .container{
     height:100%;
-    width: 100%;
-    max-width: 1000px;
+    width: 80%;
+    min-width: 600px;
     margin:auto;
     overflow-x: auto;
 }
@@ -157,7 +157,7 @@ tr:nth-child(even) {
 
                     <td class="td-edit">
                         <span>
-                            <a href="/form-update/<?= $employe->idEmploye ?>">
+                            <a href="/form-update-employe/<?= $employe->idEmploye ?>">
                                 <button class="btn-edit" ></button>
                             </a>
                         </span>
@@ -175,5 +175,4 @@ tr:nth-child(even) {
         <a href="/form-add-employe" class="btn-add">Ajouter un utilisateur</a>
     </div>
 </body>
-</html
 

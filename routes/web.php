@@ -15,10 +15,13 @@ $app->get('/layout', [HomeController::class, 'showLayout']);
 
 $app->get('/showEmploye', [HomeController::class, 'showAllEmployes']);
 $app->get('/form-add-employe', [HomeController::class, 'showAddEmploye']);
+$app->get('/form-update-employe/{id:[0-9]+}', [HomeController::class, 'showUpdateEmploye']);
+
 
 
 $app->post('/newEmploye', [GestionController::class, 'addEmploye']);
-$app->get('/delete/{id:[0-9]+}', [GestionController::class, 'deleteEmploye']);
+$app->delete('/delete/{id:[0-9]+}', [GestionController::class, 'deleteEmploye']);
+$app->post('/updateEmploye/{id:[0-9]+}', [GestionController::class, 'updateEmploye']);
 
 
 

@@ -47,11 +47,8 @@
         </button>
         <ul class="sub-menu">
           <div>
-            <li><a href="#">Voir tout</a></li>
-            <li><a href="#">Ajouter</a></li>
-            <li><a href="#">Coding</a></li>
-            <li><a href="#">Gardening</a></li>
-            <li><a href="#">School</a></li>
+            <li><a href="/showEmploye">Voir tout</a></li>
+            <li><a href="/form-add-employe">Ajouter</a></li>
           </div>
         </ul>
       </li>

@@ -40,6 +40,14 @@ class HomeController extends BaseController {
         $departements = Departement::fetchAll();
         return $this->view->render($response, 'form-add-employe.php', ['roles' => $roles, 'departements' => $departements]);
     }
+    public function showUpdateEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        $employeId = $args['id'];
+        $employe = Employe::fetchById($employeId);
+        $roles = Role::fetchAll();
+        $departements = Departement::fetchAll();
+        return $this->view->render($response, 'form-update-employe.php', ['employe' => $employe, 'roles'=> $roles, 'departements' => $departements]);
+    }
 
     public function showLayout(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
