@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Indiquer les classes à utiliser
 use Slim\Factory\AppFactory;
 // Activer le chargement automatique des classes
