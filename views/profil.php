@@ -1,4 +1,15 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    html *{
+        padding: 0;
+    }
+</style>
+</head>
+
+<body>
+    
+
 
 <h5 class="mb-4 fw-semibold">Profile</h5>
 
@@ -82,3 +93,4 @@
     </div>
   </div>
 </div>
+</body>
