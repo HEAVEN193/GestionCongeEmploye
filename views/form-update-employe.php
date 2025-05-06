@@ -111,29 +111,33 @@ button:hover {
 
         <label for="statut" class="form-label">Statut</label>
         <select id="statut" name="statut" required>
-            
-            <option value="actif">actif</option>
-            <option value="inactif">inactif</option>
+
+            <option value="actif" <?= $employe->Statut === 'actif' ? 'selected' : '' ?>> actif</option>
+            <option value="inactif" <?= $employe->Statut === 'inactif' ? 'selected' : '' ?>> inactif</option>
         </select><br><br>
 
         <label for="role">Role:</label>
         <select id="role" name="role" required>
-            <?php foreach ($roles as $role): ?>
-                <option value="<?=  $role->idRole ?>"><?=  $role->NomRole ?></option>
-            <?php endforeach; ?>
+        <?php foreach ($roles as $role): ?>
+            <option value="<?= $role->idRole ?>" <?= $role->idRole == $employe->idRole ? 'selected' : '' ?>>
+                <?= htmlspecialchars($role->NomRole) ?>
+            </option>
+        <?php endforeach; ?>
         </select><br><br>
             
         <label>Departement:</label>
 
         <select id="departement" name="departement" required>
-            <?php foreach ($departements as $departement): ?>
-                <option value="<?=  $departement->idDepartement ?>"><?=  $departement->NomDepartement ?></option>
+                <?php foreach ($departements as $departement): ?>
+                <option value="<?= $departement->idDepartement ?>" <?= $departement->idDepartement == $employe->idDepartement ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($departement->NomDepartement) ?>
+                </option>
             <?php endforeach; ?>
         </select>
       
         <br>
 
-        <button type="submit" class="btn-add">Ajouter</button>
+        <button type="submit" class="btn-add">Modifier</button>
     </form>
 
 </body>

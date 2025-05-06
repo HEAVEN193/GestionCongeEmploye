@@ -48,6 +48,10 @@ class HomeController extends BaseController {
         $departements = Departement::fetchAll();
         return $this->view->render($response, 'form-update-employe.php', ['employe' => $employe, 'roles'=> $roles, 'departements' => $departements]);
     }
+    public function showProfilPage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        return $this->view->render($response, 'profil.php');
+    }
 
     public function showLayout(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {

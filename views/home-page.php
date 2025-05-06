@@ -25,6 +25,8 @@
     }
     body {
       background-color: #f8f9fa;
+      overflow: hidden;
+
     }
     
     .calendar-cell {

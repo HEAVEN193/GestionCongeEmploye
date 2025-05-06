@@ -16,6 +16,8 @@ $app->get('/layout', [HomeController::class, 'showLayout']);
 $app->get('/showEmploye', [HomeController::class, 'showAllEmployes']);
 $app->get('/form-add-employe', [HomeController::class, 'showAddEmploye']);
 $app->get('/form-update-employe/{id:[0-9]+}', [HomeController::class, 'showUpdateEmploye']);
+$app->get('/profil', [HomeController::class, 'showProfilPage']);
+
 
 
 
