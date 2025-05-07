@@ -129,41 +129,36 @@ tr:nth-child(even) {
 
 
 <div class="container">
-    <h1>Liste des employes</h1>
+    <h1>Liste des departements</h1>
 
 
     <table>
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Pseudo</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Departement</th>
+                    <th>Manager</th>
                     <th>Edition</th>
 
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($employes as $employe): ?>
+            <?php foreach ($departements as $departement): ?>
                 <tr>
-                    <td><?= htmlspecialchars($employe->Nom) ?></td>
-                    <td><?= htmlspecialchars($employe->Prenom) ?></td>
-                    <td><?= htmlspecialchars($employe->Pseudo) ?></td>
-                    <td><?= htmlspecialchars($employe->Email) ?></td>
-                    <td><?= htmlspecialchars($employe->getRole()->NomRole) ?></td>
-                    <td><?= htmlspecialchars($employe->getDepartement()->NomDepartement) ?></td>
+                    <td><?= htmlspecialchars($departement->idDepartement) ?></td>
+                    <td><?= htmlspecialchars($departement->NomDepartement) ?></td>
+                    <td><?= $departement->getManager() ? htmlspecialchars($departement->getManager()->Pseudo) : 'Aucun' ?></td>
+
 
                     <td class="td-edit">
                         <span>
-                            <a href="/form-update-employe/<?= $employe->idEmploye ?>">
+                            <a href="/form-update-departement/<?= $departement->idDepartement ?>">
                                 <button class="btn-edit" ></button>
                             </a>
                         </span>
                         
                         <span>
-                            <a href="/deleteEmploye/<?= $employe->idEmploye ?>">
+                            <a href="/deleteDepartement/<?= $departement->idDepartement ?>">
                                 <button class="btn-delete"></button>
                             </a>
                         </span>
@@ -172,7 +167,7 @@ tr:nth-child(even) {
             <?php endforeach; ?>
             </tbody>
         </table>
-        <a href="/form-add-employe" class="btn-add">Ajouter un utilisateur</a>
+        <a href="/form-add-departement" class="btn-add">Ajouter un departement</a>
     </div>
 </body>
 

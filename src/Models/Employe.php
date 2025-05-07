@@ -60,6 +60,14 @@ class Employe
         return $statement->fetchAll();
     }
 
+    public static function fetchAllManager() :array
+    {
+        $statement = Database::connection()->prepare("SELECT * FROM EMPLOYES WHERE idRole = 2");
+        $statement->execute();
+        $statement->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
+        return $statement->fetchAll();
+    }
+
     public static function fetchById(int $id) :Employe|false
     {
         $statement = Database::connection()

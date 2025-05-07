@@ -53,6 +53,32 @@ class GestionController extends BaseController {
 
         header('Location: /showEmploye');
         exit;
+    }
 
+    public function addDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_STRING);
+        $idManager = ($_POST['manager'] === "0" || $_POST['manager'] === 0 || $_POST['manager'] == "null") ? null : $_POST['manager'];
+
+        $departementToCreate = Departement::create($nom, $idManager);
+        header('Location: /showDepartement');
+        exit;
+    }
+
+    public function updateDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $idDepartement = $args['id'];
+        $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_STRING);
+        $idManager = ($_POST['manager'] === "0" || $_POST['manager'] === 0 || $_POST['manager'] == "null") ? null : $_POST['manager'];
+
+        Departement::update($idDepartement, $nom, $idManager);
+
+        header('Location: /showDepartement');
+        exit;
+    }
+
+    public function deleteDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $idDepartement = $args['id'];
+        Departement::delete($idDepartement);
+        header('Location: /showDepartement');
+        exit;
     }
 }

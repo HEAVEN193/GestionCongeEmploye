@@ -48,6 +48,29 @@ class HomeController extends BaseController {
         $departements = Departement::fetchAll();
         return $this->view->render($response, 'form-update-employe.php', ['employe' => $employe, 'roles'=> $roles, 'departements' => $departements]);
     }
+
+    public function showAddDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        $managers = Employe::fetchAllManager();
+
+        return $this->view->render($response, 'form-add-departement.php', ['managers' => $managers]);
+    }
+
+    public function showUpdateDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        $idDepartement = $args['id'];
+        $departement = Departement::fetchById($idDepartement);
+        $managers = Employe::fetchAllManager();
+        
+        return $this->view->render($response, 'form-update-departement.php', ['departement' => $departement, 'managers' => $managers]);
+    }
+
+    public function showAllDepartements(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        $departements = Departement::fetchAll();
+        return $this->view->render($response, 'departement-manage-page.php', ['departements' => $departements]);
+    }
+
     public function showProfilPage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
         return $this->view->render($response, 'profil.php');
