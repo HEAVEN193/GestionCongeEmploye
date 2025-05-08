@@ -8,6 +8,8 @@ use Matteomcr\GestionCongeEmploye\Models\Employe;
 use Matteomcr\GestionCongeEmploye\Models\Role;
 use Matteomcr\GestionCongeEmploye\Models\Departement;
 use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
+use Matteomcr\GestionCongeEmploye\Models\Conge;
+
 
 
 
@@ -92,7 +94,9 @@ class HomeController extends BaseController {
 
     public function showCongeManage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
-        return $this->view->render($response, 'conge-manage-page.php');
+        $employe = Employe::current();
+        $conges = Conge::fetchByEmployeId($employe->idEmploye);
+        return $this->view->render($response, 'conge-manage-page.php', ['conges' => $conges]);
     }
 
     public function showFormHeureSupp(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface

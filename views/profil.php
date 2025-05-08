@@ -94,25 +94,25 @@
               <strong>
               <?php
                     $resultat = Employe::current()->getOvertimeConvertedToPayment();
-                    echo $resultat['heures']. " heures";    
+                    echo $resultat['heures'] ?? 0 . " heures";    
             ?>
             </strong></div>
             <div>Heures convertit en congé : <strong>
             <?php
                     $resultat = Employe::current()->getOvertimeConvertedToLeave();
-                    echo $resultat['heures']. " heures";    
+                    echo $resultat['heures'] ?? 0 . " heures";    
             ?>
             </strong></div>
             <div>Heures supplémentaire(s) refusée(s) :<strong>
             <?php
                     $resultat = Employe::current()->getOvertimeRejected();
-                    echo $resultat['heures']. " heures";    
+                    echo $resultat['heures'] ?? 0 . " heures";    
             ?>
             </strong></div>
             <div>Total heures supplémentaire :<strong>
             <?php
                     $resultat = Employe::current()->getTotalOvertime();
-                    echo $resultat['heures']. " heures";    
+                    echo $resultat['heures'] ?? 0 ." heures";    
             ?>
             </strong></div>
           </div>

@@ -1,3 +1,8 @@
+<?php
+   use Matteomcr\GestionCongeEmploye\Models\Employe;
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,10 +20,22 @@
   <div class="container py-5">
     <div class="card shadow-sm">
       <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
-        <h5 class="mb-0">Liste des demandes de congés</h5>
-        <a href="/leave/new" class="btn btn-primary">
-          <i class="bi bi-calendar"></i> Nouvelle demande
+      <?php if (Employe::current()->getRole()->NomRole == 'Employe'): ?>  
+      <h5 class="mb-0">Mes soumissions d'heure supplémentaires</h5>
+      <?php elseif(Employe::current()->getRole()->NomRole == 'Manager'): ?>
+        <h5 class="mb-0">Relevé d'heure supplémentaires du département</h5>
+      <?php else: ?>
+        <h5 class="mb-0">Tout les relevé d'heure supplémentaires</h5>
+
+
+        <?php endif; ?>
+
+        <?php if (Employe::current()->getRole()->NomRole == 'Employe'): ?>  
+        <a href="/form-heures-supp" class="btn btn-primary">
+          <i class="bi bi-calendar"></i> Soumettre un relevé
         </a>
+        <?php endif; ?>
+
       </div>
       <div class="card-body">
         <!-- Aucun résultat -->
@@ -28,33 +45,52 @@
           <table class="table table-bordered align-middle">
             <thead class="table-light">
               <tr>
-                <th scope="col">Employé</th>
                 <th scope="col">Type</th>
                 <th scope="col">Durée</th>
-                <th scope="col">Dates</th>
+                <th scope="col">Date début</th>
+                <th scope="col">Date fin</th>
                 <th scope="col">Statut</th>
-                <th scope="col" class="text-end">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Jean Dupont</td>
-                <td>Vacances</td>
-                <td>5 jours</td>
-                <td>10 mai 2025 - 14 mai 2025</td>
-                <td><span class="badge bg-warning text-dark">En attente</span></td>
-                <td class="text-end">
-                  <div class="btn-group" role="group">
-                    <button class="btn btn-success btn-sm">
-                      <i class="bi bi-check"></i> Approuver
-                    </button>
-                    <button class="btn btn-danger btn-sm">
-                      <i class="bi bi-x"></i> Refuser
-                    </button>
-                  </div>
+            <?php foreach ($conges as $conges): ?>
+            <tr>
+                <td><?= htmlspecialchars($conges->TypeCongeo) ?></td>
+                <td><?= htmlspecialchars($conges->NbreJourDemande) ?></td>
+                <td><?= htmlspecialchars($conges->DateDebut) ?></td>
+                <td><?= htmlspecialchars($conges->DateFin) ?></td>
+                <td>
+                <?php if ($conges->Statut === 'Valide'): ?>
+                    <span class="badge bg-success">Validée</span>
+                <?php elseif ($conges->Statut === 'Refuse'): ?>
+                    <span class="badge bg-danger">Refusée</span>
+                <?php else: ?>
+                    <span class="badge bg-warning text-dark">En attente</span>
+                <?php endif; ?>
                 </td>
-              </tr>
-              <!-- Autres lignes ici -->
+                <td><?= htmlspecialchars($conges->ConversionType) ?></td>
+
+                <td class="text-end">
+                <?php if ($conges->Statut === 'En attente' && Employe::current()->getRole()->NomRole != 'Employe'): ?>
+                    <div class="btn-group" role="group">
+                        <form action="/validerHeureSupp/<?= $conges->idHeureSupp ?>" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm">
+                            <i class="bi bi-check"></i> Approuver
+                            </button>
+                        </form>
+                        <form action="/refuserHeureSupp/<?= $conges->idHeureSupp ?>" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-x"></i> Refuser
+                            </button>
+                        </form>
+                    </div>
+                <?php else: ?>
+                    <em class="text-muted">Action non disponible</em>
+                <?php endif; ?>
+                </td>
+             
+            </tr>
+            <?php endforeach; ?>
             </tbody>
           </table>
         </div>
