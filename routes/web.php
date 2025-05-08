@@ -20,6 +20,12 @@ $app->get('/form-update-employe/{id:[0-9]+}', [HomeController::class, 'showUpdat
 $app->get('/showDepartement', [HomeController::class, 'showAllDepartements']);
 $app->get('/form-add-departement', [HomeController::class, 'showAddDepartement']);
 $app->get('/form-update-departement/{id:[0-9]+}', [HomeController::class, 'showUpdateDepartement']);
+$app->get('/heuresupp-manage-page', [HomeController::class, 'showHeureSuppManage']);
+$app->get('/conge-manage-page', [HomeController::class, 'showCongeManage']);
+
+$app->get('/form-heures-supp', [HomeController::class, 'showFormHeureSupp']);
+
+
 
 
 
@@ -36,6 +42,11 @@ $app->post('/updateEmploye/{id:[0-9]+}', [GestionController::class, 'updateEmplo
 $app->post('/newDepartement', [GestionController::class, 'addDepartement']);
 $app->get('/deleteDepartement/{id:[0-9]+}', [GestionController::class, 'deleteDepartement']);
 $app->post('/updateDepartement/{id:[0-9]+}', [GestionController::class, 'updateDepartement']);
+
+$app->post('/heuresupp', [GestionController::class, 'reportHeureSupp']);
+
+$app->post('/validerHeureSupp/{id:[0-9]+}', [GestionController::class, 'validateOvertime']);
+$app->post('/refuserHeureSupp/{id:[0-9]+}', [GestionController::class, 'rejectOvertime']);
 
 
 $app->get('/login', [HomeController::class, 'showLoginPage']);

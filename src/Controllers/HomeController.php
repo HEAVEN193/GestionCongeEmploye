@@ -7,6 +7,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Matteomcr\GestionCongeEmploye\Models\Employe;
 use Matteomcr\GestionCongeEmploye\Models\Role;
 use Matteomcr\GestionCongeEmploye\Models\Departement;
+use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
+
 
 
 
@@ -69,6 +71,33 @@ class HomeController extends BaseController {
     {
         $departements = Departement::fetchAll();
         return $this->view->render($response, 'departement-manage-page.php', ['departements' => $departements]);
+    }
+
+    public function showHeureSuppManage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        $employe = Employe::current();
+        $role = $employe->getRole()->NomRole;
+
+        if ($role === 'Administrateur') {
+            $heuresSupp = HeureSupplementaire::fetchAll(); // admin → tout
+        }elseif($role=== 'Manager'){
+            $departement = $employe->getDepartement();
+            $heuresSupp = HeureSupplementaire::fetchByIdDepartement($departement->idDepartement);
+        }
+        else {
+            $heuresSupp = Employe::current()->getOvertimeReport(); // employé → que les siennes
+        }
+        return $this->view->render($response, 'heureSupp-manage-page.php', ['heuresSupp' => $heuresSupp]);
+    }
+
+    public function showCongeManage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        return $this->view->render($response, 'conge-manage-page.php');
+    }
+
+    public function showFormHeureSupp(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        return $this->view->render($response, 'form-heure-supp.php');
     }
 
     public function showProfilPage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface

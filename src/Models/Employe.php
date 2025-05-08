@@ -77,6 +77,15 @@ class Employe
         return $statement->fetch();
     }
 
+    public static function fetchByDepartement(int $idDepartement) :Employe|false
+    {
+        $statement = Database::connection()
+        ->prepare("SELECT * FROM EMPLOYES WHERE idDepartement = :id");
+        $statement->execute([':id' => $id]);
+        $statement->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
+        return $statement->fetch();
+    }
+
 
     /**
      * Récupère un employe en fonction de son adresse email.
@@ -202,6 +211,27 @@ class Employe
             $this->departement = $this->idDepartement ? Departement::fetchById($this->idDepartement) : null;
         }
         return $this->departement;
+    }
+
+    public function getOvertimeReport() : array
+    {
+        return HeureSupplementaire::fetchByEmployeId($this->idEmploye);
+    }
+
+    public function getTotalOvertime(){
+        return HeureSupplementaire::getTotalOvertimeByUserId($this->idEmploye);
+    }
+
+    public function getOvertimeRejected(){
+        return HeureSupplementaire::getOvertimereRejectedByUserId($this->idEmploye);
+    }
+
+    public function getOvertimeConvertedToLeave(){
+        return HeureSupplementaire::getOvertimeConvertedToLeaveByUserId($this->idEmploye);
+    }
+
+    public function getOvertimeConvertedToPayment(){
+        return HeureSupplementaire::getOvertimeConvertedToPaymentByUserId($this->idEmploye);
     }
 
 

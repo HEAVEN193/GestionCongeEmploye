@@ -8,6 +8,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Matteomcr\GestionCongeEmploye\Models\Employe;
 use Matteomcr\GestionCongeEmploye\Models\Role;
 use Matteomcr\GestionCongeEmploye\Models\Departement;
+use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
+
 
 class GestionController extends BaseController {
 
@@ -79,6 +81,37 @@ class GestionController extends BaseController {
         $idDepartement = $args['id'];
         Departement::delete($idDepartement);
         header('Location: /showDepartement');
+        exit;
+    }
+
+    public function reportHeureSupp(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $date = $_POST['date'] ?? 0;
+        $heures = isset($_POST['heures']) ? (int)$_POST['heures'] : 0;
+        $idEmploye = Employe::current()->idEmploye;
+        $ratioConversion = $heures / 8; 
+        $conversionType = $_POST['conversionType'] ?? [];
+
+
+        $reportToCreate = HeureSupplementaire::create($date, $heures, $ratioConversion, $idEmploye, $conversionType);
+        header('Location: /heuresupp-manage-page');
+        exit;
+    }
+
+    public function validateOvertime(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $idHeureSupp = $args['id'];
+        $heureSupp = HeureSupplementaire::fetchById($idHeureSupp);
+        $heureSupp->validate();
+
+        header('Location: /heuresupp-manage-page');
+        exit;
+    }
+
+    public function rejectOvertime(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $idHeureSupp = $args['id'];
+        $heureSupp = HeureSupplementaire::fetchById($idHeureSupp);
+        $heureSupp->reject();
+
+        header('Location: /heuresupp-manage-page');
         exit;
     }
 }

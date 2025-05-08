@@ -43,7 +43,9 @@ class AuthController extends BaseController{
              }
          } catch (Exception $e) {
              $_SESSION['error'] = $e->getMessage();
-             return $this->view->render($response, 'login-page.php');
+             $html = $this->view->fetch('login-page.php');
+            $response->getBody()->write($html);
+            return $response;
          }
 
     }

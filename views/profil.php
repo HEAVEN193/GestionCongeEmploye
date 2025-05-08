@@ -57,7 +57,14 @@
                 ?></span>
           </div>
           <div class="d-flex align-items-center">
-            <span class="me-2"><i class="bi bi-people"></i> Membre de l'équipe</span>
+            <span class="me-2"><i class="bi bi-people"></i>
+            <?php
+                        if(Employe::current())
+                            echo Employe::current()->getRole()->NomRole; 
+                        else
+                            echo "LOGIN";
+                ?>
+          </span>
           </div>
         </div>
         <span class="ms-auto">
@@ -82,14 +89,38 @@
         </div>
         <div class="col-md-6 mb-3">
           <div class="border rounded-3 p-3 h-100">
-            <h6 class="mb-3">Utilisation cette année</h6>
-            <div>Vacances utilisé <strong>5 jours</strong></div>
-            <div>Arrêt utilisé <strong>2 jours</strong></div>
-            <div>Personnel utilisé <strong>1 jour</strong></div>
-            <div>Heures supplémentaire <strong>12 heures</strong></div>
+            <h6 class="mb-3">Heure supplémentaires</h6>
+            <div>Heures convertit en argent :
+              <strong>
+              <?php
+                    $resultat = Employe::current()->getOvertimeConvertedToPayment();
+                    echo $resultat['heures']. " heures";    
+            ?>
+            </strong></div>
+            <div>Heures convertit en congé : <strong>
+            <?php
+                    $resultat = Employe::current()->getOvertimeConvertedToLeave();
+                    echo $resultat['heures']. " heures";    
+            ?>
+            </strong></div>
+            <div>Heures supplémentaire(s) refusée(s) :<strong>
+            <?php
+                    $resultat = Employe::current()->getOvertimeRejected();
+                    echo $resultat['heures']. " heures";    
+            ?>
+            </strong></div>
+            <div>Total heures supplémentaire :<strong>
+            <?php
+                    $resultat = Employe::current()->getTotalOvertime();
+                    echo $resultat['heures']. " heures";    
+            ?>
+            </strong></div>
           </div>
         </div>
       </div>
+      <form action="/logout" method="get">
+      <button type="submit" class="btn btn-outline-danger mt-4">Se déconnecter</button>
+      </form>
     </div>
   </div>
 </div>
