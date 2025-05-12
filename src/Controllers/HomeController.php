@@ -34,18 +34,54 @@ class HomeController extends BaseController {
 
     public function showAllEmployes(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
-        $employes = Employe::fetchAll();
-        return $this->view->render($response, 'employe-manage-page.php', ['employes' => $employes]);
+        $user = Employe::current();
+
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole == "Employe"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole == "Manager"){
+            $employes = Employe::fetchByDepartement($user->getDepartement()->idDepartement);
+        }
+
+        if($user->getRole()->NomRole == "Administrateur"){
+            $employes = Employe::fetchAll();
+        }
+        return $this->view->render($response, 'employe-manage-page.php', ['employes' => $employes]);   
     }
 
     public function showAddEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
+        $user = Employe::current();
+
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
         $roles = Role::fetchAll();
         $departements = Departement::fetchAll();
         return $this->view->render($response, 'form-add-employe.php', ['roles' => $roles, 'departements' => $departements]);
     }
     public function showUpdateEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
+        $user = Employe::current();
+
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+        
         $employeId = $args['id'];
         $employe = Employe::fetchById($employeId);
         $roles = Role::fetchAll();

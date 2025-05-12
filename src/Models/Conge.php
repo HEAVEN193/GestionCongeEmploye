@@ -118,7 +118,7 @@ class Conge
     
             return $pdo->lastInsertId();
         } catch (\Exception $e) {
-            throw new \Exception("Une erreur est survenue lors de la création du compte : " . $e->getMessage());
+            throw new \Exception("Une erreur est survenue lors de la création du conges : " . $e->getMessage());
         }
     }
     

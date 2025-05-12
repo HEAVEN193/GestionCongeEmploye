@@ -77,13 +77,13 @@ class Employe
         return $statement->fetch();
     }
 
-    public static function fetchByDepartement(int $idDepartement) :Employe|false
+    public static function fetchByDepartement(int $idDepartement) :array|false
     {
         $statement = Database::connection()
         ->prepare("SELECT * FROM EMPLOYES WHERE idDepartement = :id");
-        $statement->execute([':id' => $id]);
+        $statement->execute([':id' => $idDepartement]);
         $statement->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
-        return $statement->fetch();
+        return $statement->fetchAll();
     }
 
 
@@ -103,74 +103,113 @@ class Employe
     }
 
     public static function create($nom, $prenom, $pseudo, $mdp, $email, $dateEmbauche, $statut, $idrole, $iddepartement)
-    {
-        try {
-            $pdo = Database::connection();
-            $stmt = $pdo->prepare("INSERT INTO EMPLOYES (Nom, Prenom, Pseudo, MotDePasse, Email, DateEmbauche, Statut, idRole, idDepartement)
-                                   VALUES (:nom, :prenom, :pseudo, :mdp, :email, :dateEmbauche, :statut, :idrole, :iddepartement)");
-    
-            // Hasher le mot de passe
-            $hashedPassword = password_hash($mdp, PASSWORD_DEFAULT);
-    
-            // Liaison des paramètres
-            $stmt->bindParam(':nom', $nom);
-            $stmt->bindParam(':prenom', $prenom);
-            $stmt->bindParam(':pseudo', $pseudo);
-            $stmt->bindParam(':mdp', $hashedPassword); // <- ici on met bien le mot de passe hashé
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':dateEmbauche', $dateEmbauche);
-            $stmt->bindParam(':statut', $statut);
-            $stmt->bindParam(':idrole', $idrole);
-            $stmt->bindParam(':iddepartement', $iddepartement);
-    
-            // Exécution
-            $stmt->execute();
-    
-            return $pdo->lastInsertId();
-        } catch (\Exception $e) {
-            throw new \Exception("Une erreur est survenue lors de la création du compte : " . $e->getMessage());
+{
+    try {
+        $pdo = Database::connection();
+
+        // 1. Vérifier les champs obligatoires
+        if (empty($nom) || empty($prenom) || empty($pseudo) || empty($mdp) || empty($email) || empty($dateEmbauche)) {
+            throw new \Exception("Tous les champs obligatoires doivent être remplis.");
         }
+
+        // 2. Valider l'email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new \Exception("Format de l'adresse email invalide.");
+        }
+
+        // 3. Vérifier si l'email existe déjà
+        if(self::emailAlreadyExist($email)){
+            throw new \Exception("Cet email est déjà utilisé.");
+        }
+
+
+        // 5. Vérifier la longueur du mot de passe
+        if (strlen($mdp) < 6) {
+            throw new \Exception("Le mot de passe doit contenir au moins 6 caractères.");
+        }
+
+        // 6. Hasher le mot de passe
+        $hashedPassword = password_hash($mdp, PASSWORD_DEFAULT);
+
+        // 7. Préparer l'insertion
+        $stmt = $pdo->prepare("INSERT INTO EMPLOYES 
+            (Nom, Prenom, Pseudo, MotDePasse, Email, DateEmbauche, Statut, idRole, idDepartement) 
+            VALUES 
+            (:nom, :prenom, :pseudo, :mdp, :email, :dateEmbauche, :statut, :idrole, :iddepartement)");
+
+        $stmt->bindParam(':nom', $nom);
+        $stmt->bindParam(':prenom', $prenom);
+        $stmt->bindParam(':pseudo', $pseudo);
+        $stmt->bindParam(':mdp', $hashedPassword);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':dateEmbauche', $dateEmbauche);
+        $stmt->bindParam(':statut', $statut);
+        $stmt->bindParam(':idrole', $idrole);
+        $stmt->bindParam(':iddepartement', $iddepartement);
+
+        $stmt->execute();
+
+        return $pdo->lastInsertId();
+
+    } catch (\Exception $e) {
+        // Tu peux loguer l'erreur ou la transmettre proprement
+        throw new \Exception($e->getMessage());
     }
+}
+
     
 
-    public static function update($id, $nom, $prenom, $pseudo, $mdp, $email, $dateEmbauche, $statut, $idrole, $iddepartement)
-    {
-        try {
-            $pdo = Database::connection();
-    
-            // Hasher le nouveau mot de passe
-            $hashedPassword = password_hash($mdp, PASSWORD_DEFAULT);
-    
-            $stmt = $pdo->prepare("UPDATE EMPLOYES SET
+public static function update($id, $nom, $prenom, $pseudo, $dateEmbauche, $statut, $idrole, $iddepartement)
+{
+    try {
+        $pdo = Database::connection();
+
+        // Vérification des champs obligatoires
+        if (
+            empty($id) || empty($nom) || empty($prenom) || empty($pseudo)
+            || empty($dateEmbauche) || empty($statut)
+            || empty($idrole) || empty($iddepartement)
+        ) {
+            throw new \Exception("Tous les champs obligatoires doivent être remplis.");
+        }
+
+        // Vérification de l'unicité du pseudo (hors soi-même)
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM EMPLOYES WHERE Pseudo = :pseudo AND idEmploye != :id");
+        $stmt->execute(['pseudo' => $pseudo, 'id' => $id]);
+        if ($stmt->fetchColumn() > 0) {
+            throw new \Exception("Ce pseudo est déjà utilisé par un autre employé.");
+        }
+
+        // Mise à jour (email et mot de passe non touchés)
+        $stmt = $pdo->prepare("
+            UPDATE EMPLOYES SET
                 Nom = :nom,
                 Prenom = :prenom,
                 Pseudo = :pseudo,
-                MotDePasse = :mdp,
-                Email = :email,
                 DateEmbauche = :dateEmbauche,
                 Statut = :statut,
                 idRole = :idrole,
                 idDepartement = :iddepartement
-                WHERE idEmploye = :id");
-    
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->bindParam(':nom', $nom);
-            $stmt->bindParam(':prenom', $prenom);
-            $stmt->bindParam(':pseudo', $pseudo);
-            $stmt->bindParam(':mdp', $hashedPassword);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':dateEmbauche', $dateEmbauche);
-            $stmt->bindParam(':statut', $statut);
-            $stmt->bindParam(':idrole', $idrole);
-            $stmt->bindParam(':iddepartement', $iddepartement);
-    
-            $stmt->execute();
-    
-            return true;
-        } catch (\Exception $e) {
-            throw new \Exception("Une erreur est survenue lors de la mise à jour de l'employé : " . $e->getMessage());
-        }
+            WHERE idEmploye = :id
+        ");
+
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':nom', $nom);
+        $stmt->bindParam(':prenom', $prenom);
+        $stmt->bindParam(':pseudo', $pseudo);
+        $stmt->bindParam(':dateEmbauche', $dateEmbauche);
+        $stmt->bindParam(':statut', $statut);
+        $stmt->bindParam(':idrole', $idrole);
+        $stmt->bindParam(':iddepartement', $iddepartement);
+
+        $stmt->execute();
+        return true;
+
+    } catch (\Exception $e) {
+        throw new \Exception($e->getMessage());
     }
+}
+
 
     public static function delete($employeId) {
         $pdo = Database::connection();
@@ -257,6 +296,15 @@ class Employe
             // Email n'existe pas
             throw new \Exception("Email ou mot de passe incorrect !");
         }
+    }
+
+    public static function emailAlreadyExist($email): bool
+    {
+        $statement = Database::connection()->prepare("SELECT * FROM EMPLOYES WHERE Email = :email");
+        $statement->execute([':email' => $email]);
+        $user = $statement->fetch(\PDO::FETCH_ASSOC);
+
+        return $user ? true : false;
     }
 
 

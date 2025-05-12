@@ -1,6 +1,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <title>Ajouter un utilisateur</title>
     <style>
    body {
@@ -103,8 +105,6 @@ button:hover {
         <label for="pseudo">Pseudo:</label>
         <input type="text" id="pseudo" name="pseudo" value="<?= $employe->Pseudo ?>" required><br><br>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="<?= $employe->Email ?>"required><br><br>
 
         <label for="date_embauche" class="form-label">Date d'embauche</label>
         <input type="date" class="form-control" id="date_embauche" name="dateEmbauche"value="<?= $employe->DateEmbauche ?>" required>
@@ -138,6 +138,12 @@ button:hover {
         <br>
 
         <button type="submit" class="btn-add">Modifier</button>
+        <?php
+            if(isset($_SESSION['error'])){
+                echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';
+                unset($_SESSION['error']); 
+            } 
+        ?>
     </form>
 
 </body>

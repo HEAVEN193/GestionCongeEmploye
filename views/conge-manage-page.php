@@ -50,6 +50,7 @@
                 <th scope="col">Date début</th>
                 <th scope="col">Date fin</th>
                 <th scope="col">Statut</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -59,6 +60,7 @@
                 <td><?= htmlspecialchars($conges->NbreJourDemande) ?></td>
                 <td><?= htmlspecialchars($conges->DateDebut) ?></td>
                 <td><?= htmlspecialchars($conges->DateFin) ?></td>
+                <td><?= htmlspecialchars($conges->Statut) ?></td>
                 <td>
                 <?php if ($conges->Statut === 'Valide'): ?>
                     <span class="badge bg-success">Validée</span>

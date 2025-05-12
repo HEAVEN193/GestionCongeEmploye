@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <title>Ajouter un utilisateur</title>
     <style>
    body {
@@ -99,22 +101,22 @@ button:hover {
         
 
         <label for="nom">Nom:</label>
-        <input type="text" id="lastName" name="nom" required><br><br>
+        <input type="text" id="lastName" name="nom" required value="<?php if(isset($nom)) echo $nom; else echo ''; ?>"><br><br>
 
         <label for="prenom">Prénom:</label>
-        <input type="text" id="firstName" name="prenom" required><br><br>
+        <input type="text" id="firstName" name="prenom" required value="<?php if(isset($prenom)) echo $prenom; else echo ''; ?>"><br><br>
 
         <label for="pseudo">Pseudo:</label>
-        <input type="text" id="pseudo" name="pseudo" required><br><br>
+        <input type="text" id="pseudo" name="pseudo" required value="<?php if(isset($pseudo)) echo $pseudo; else echo ''; ?>"><br><br>
         
         <label for="password">Mot de passe:</label>
         <input type="password" id="password" name="password" required><br><br>
 
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
+        <input type="email" id="email" name="email" required value="<?php if(isset($email)) echo $email; else echo ''; ?>"><br><br>
 
         <label for="date_embauche" class="form-label">Date d'embauche</label>
-        <input type="date" class="form-control" id="date_embauche" name="dateEmbauche" required>
+        <input type="date" class="form-control" id="date_embauche" name="dateEmbauche" value="<?php if(isset($dateEmbauche)) echo $dateEmbauche; else echo ''; ?>" required>
 
         <label for="statut" class="form-label">Statut</label>
         <select id="statut" name="statut" required>
@@ -140,6 +142,12 @@ button:hover {
         <br>
 
         <button type="submit" class="btn-add">Ajouter</button>
+        <?php
+            if(isset($_SESSION['error'])){
+                echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';
+                unset($_SESSION['error']); 
+            } 
+        ?>
     </form>
 
 </body>

@@ -1,4 +1,6 @@
-
+<?php 
+use Matteomcr\GestionCongeEmploye\Models\Employe;
+?>
 <head>
     <style>
 body {
@@ -141,7 +143,10 @@ tr:nth-child(even) {
                     <th>Email</th>
                     <th>Role</th>
                     <th>Departement</th>
+                    <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
                     <th>Edition</th>
+                    <?php endif; ?>
+
 
                 </tr>
             </thead>
@@ -154,6 +159,7 @@ tr:nth-child(even) {
                     <td><?= htmlspecialchars($employe->Email) ?></td>
                     <td><?= htmlspecialchars($employe->getRole()->NomRole) ?></td>
                     <td><?= htmlspecialchars($employe->getDepartement()->NomDepartement) ?></td>
+                    <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
 
                     <td class="td-edit">
                         <span>
@@ -168,11 +174,17 @@ tr:nth-child(even) {
                             </a>
                         </span>
                     </td> 
+                    <?php endif; ?>
+
                 </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
+       <?php 
+       if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
         <a href="/form-add-employe" class="btn-add">Ajouter un utilisateur</a>
+        <?php endif; ?>
+
     </div>
 </body>
 

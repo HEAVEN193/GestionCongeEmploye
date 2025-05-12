@@ -15,23 +15,66 @@ class GestionController extends BaseController {
 
 
     public function addEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) {
-        $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_STRING);
-        $prenom = filter_input(INPUT_POST, 'prenom', FILTER_SANITIZE_STRING);
-        $pseudo = filter_input(INPUT_POST, 'pseudo', FILTER_SANITIZE_STRING);
-        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);  
-        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);     
-        $dateEmbauche = $_POST['dateEmbauche'] ?? 0;            
-        $statut = $_POST['statut'] ?? [];
-        $idRole = $_POST['role'] ?? [];
-        $idDepartement = $_POST['departement'] ?? [];
+        // Récupération et nettoyage des champs
+        $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $prenom = filter_input(INPUT_POST, 'prenom', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pseudo = filter_input(INPUT_POST, 'pseudo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $dateEmbauche = $_POST['dateEmbauche'] ?? null;
+        $statut = $_POST['statut'] ?? null;
+        $idRole = $_POST['role'] ?? null;
+        $idDepartement = $_POST['departement'] ?? null;
 
-        $userToCreate = Employe::create($nom, $prenom, $pseudo, $password, $email, $dateEmbauche, $statut, $idRole, $idDepartement);
-        header('Location: /showEmploye');
-        exit;
+           // Vérification des champs obligatoires
+        if (
+        empty($nom) || empty($prenom) || empty($pseudo) || empty($password)
+        || empty($email) || empty($dateEmbauche) || empty($statut)
+        || empty($idRole) || empty($idDepartement)
+        ) {
+            $_SESSION['error'] = "Veuillez remplir tous les champs obligatoires.";
+            return $this->view->render($response, 'form-add-employe.php', [
+                'nom' => $nom,
+                'prenom' => $prenom,
+                'pseudo' => $pseudo,
+                'dateEmbauche' => $dateEmbauche,
+                'email' => $email,
+                'roles' => Role::fetchAll(),
+                'departements' => Departement::fetchAll()
+            ]);
+        }
+
+
+        try {
+            Employe::create($nom, $prenom, $pseudo, $password, $email, $dateEmbauche, $statut, $idRole, $idDepartement);
+            $_SESSION['success'] = "Employé ajouté avec succès.";
+            return $response->withHeader('Location', '/showEmploye')->withStatus(302);
+        } catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            return $this->view->render($response, 'form-add-employe.php', [
+                'nom' => $nom,
+                'prenom' => $prenom,
+                'pseudo' => $pseudo,
+                'dateEmbauche' => $dateEmbauche,
+                'email' => $email,
+                'roles' => Role::fetchAll(),
+                'departements' => Departement::fetchAll()
+            ]);
+        }
     }
 
 
     public function deleteEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $user = Employe::current();
+
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+        
         $employeId = $args['id'];
         Employe::delete($employeId);
         header('Location: /showEmploye');
@@ -41,20 +84,28 @@ class GestionController extends BaseController {
 
     public function updateEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) {
         $employeId = $args['id'];
+
+        // Nettoyage des champs modifiables uniquement
         $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_STRING);
         $prenom = filter_input(INPUT_POST, 'prenom', FILTER_SANITIZE_STRING);
         $pseudo = filter_input(INPUT_POST, 'pseudo', FILTER_SANITIZE_STRING);
-        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);  
-        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);     
-        $dateEmbauche = $_POST['dateEmbauche'] ?? 0;            
-        $statut = $_POST['statut'] ?? [];
-        $idRole = $_POST['role'] ?? [];
-        $idDepartement = $_POST['departement'] ?? [];
+        $dateEmbauche = $_POST['dateEmbauche'] ?? null;
+        $statut = $_POST['statut'] ?? null;
+        $idRole = $_POST['role'] ?? null;
+        $idDepartement = $_POST['departement'] ?? null;
 
-        Employe::update($employeId, $nom, $prenom, $pseudo, $password, $email, $dateEmbauche, $statut, $idRole, $idDepartement);
-
-        header('Location: /showEmploye');
-        exit;
+        try {
+            Employe::update($employeId, $nom, $prenom, $pseudo, $dateEmbauche, $statut, $idRole, $idDepartement);
+            return $response->withHeader('Location', '/showEmploye')->withStatus(302);
+        }catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+    
+            return $this->view->render($response, 'form-update-employe.php', [
+                'employe' => Employe::fetchById($employeId),
+                'roles' => Role::fetchAll(),
+                'departements' => Departement::fetchAll()
+            ]);
+        }
     }
 
     public function addDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) {
