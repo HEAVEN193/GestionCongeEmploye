@@ -43,6 +43,10 @@ class Employe
 
     public $Statut;
 
+    public $SoldeConge;
+
+    public $SoldeCongeHeureSupp;
+
     public $idRole;
 
     public $idDepartement;
@@ -303,8 +307,28 @@ public static function update($id, $nom, $prenom, $pseudo, $dateEmbauche, $statu
         $statement = Database::connection()->prepare("SELECT * FROM EMPLOYES WHERE Email = :email");
         $statement->execute([':email' => $email]);
         $user = $statement->fetch(\PDO::FETCH_ASSOC);
-
         return $user ? true : false;
+    }
+
+    public function countCongesEnAttente(): int
+    {
+        $stmt = Database::connection()->prepare("SELECT COUNT(*) FROM CONGES WHERE Statut = 'en_attente' AND idEmploye = :id");
+        $stmt->execute([':id' => $this->idEmploye]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function countCongesApprouves(): int
+    {
+        $stmt = Database::connection()->prepare("SELECT COUNT(*) FROM CONGES WHERE Statut = 'valide' AND idEmploye = :id");
+        $stmt->execute([':id' => $this->idEmploye]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function countTotalConges(): int
+    {
+        $stmt = Database::connection()->prepare("SELECT COUNT(*) FROM CONGES WHERE idEmploye = :id");
+        $stmt->execute([':id' => $this->idEmploye]);
+        return (int) $stmt->fetchColumn();
     }
 
 

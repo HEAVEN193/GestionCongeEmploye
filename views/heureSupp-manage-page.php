@@ -72,7 +72,7 @@
                 <td><?= htmlspecialchars($releve->ConversionType) ?></td>
 
                 <td class="text-end">
-                <?php if ($releve->Statut === 'En attente' && Employe::current()->getRole()->NomRole != 'Employe'): ?>
+                <?php if ($releve->Statut === 'En attente' && Employe::current()->getRole()->NomRole == 'Manager'): ?>
                     <div class="btn-group" role="group">
                         <form action="/validerHeureSupp/<?= $releve->idHeureSupp ?>" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-success btn-sm">

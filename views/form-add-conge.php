@@ -6,6 +6,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <title>Demande de congé</title>
   <style>
+    html *{
+        padding: 0;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -92,6 +96,7 @@
     <textarea id="justification" name="justification" placeholder="Ex : voyage, rendez-vous médical, etc."></textarea>
 
     <button type="submit">Envoyer la demande</button>
+    <a href="/conge-manage-page" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
     <?php
             if(isset($_SESSION['error'])){
                 echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';

@@ -71,6 +71,7 @@ class HomeController extends BaseController {
     }
     public function showUpdateEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
+        
         $user = Employe::current();
 
         if(!$user){
@@ -90,13 +91,30 @@ class HomeController extends BaseController {
 
     public function showAddDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
-        $managers = Employe::fetchAllManager();
+        $user = Employe::current();
 
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+        $managers = Employe::fetchAllManager();
         return $this->view->render($response, 'form-add-departement.php', ['managers' => $managers]);
     }
 
     public function showUpdateDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
+        $user = Employe::current();
+
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
         $idDepartement = $args['id'];
         $departement = Departement::fetchById($idDepartement);
         $managers = Employe::fetchAllManager();
@@ -106,6 +124,15 @@ class HomeController extends BaseController {
 
     public function showAllDepartements(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
+        $user = Employe::current();
+
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
         $departements = Departement::fetchAll();
         return $this->view->render($response, 'departement-manage-page.php', ['departements' => $departements]);
     }
@@ -130,17 +157,50 @@ class HomeController extends BaseController {
     public function showCongeManage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
         $employe = Employe::current();
+        $role = $employe->getRole()->NomRole;
+
+        if ($role === 'Administrateur') {
+            $conges = Conge::fetchAll(); // admin → tout
+        }elseif($role=== 'Manager'){
+            $departement = $employe->getDepartement();
+            $conges = Conge::fetchByIdDepartement($departement->idDepartement);
+        }
+        else {
+            $conges = Conge::fetchByEmployeId($employe->idEmploye); // employé → que les siennes
+        }
+        return $this->view->render($response, 'conge-manage-page.php', ['conges' => $conges]);
+
+
         $conges = Conge::fetchByEmployeId($employe->idEmploye);
         return $this->view->render($response, 'conge-manage-page.php', ['conges' => $conges]);
     }
 
     public function showFormConge(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
+        $user = Employe::current();
+
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole == "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
         return $this->view->render($response, 'form-add-conge.php');
     }
 
     public function showFormHeureSupp(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
+        $user = Employe::current();
+
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole == "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
         return $this->view->render($response, 'form-heure-supp.php');
     }
 

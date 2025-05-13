@@ -164,22 +164,35 @@ class HeureSupplementaire
     
 
     
-    public function validate(){
+    public function validate() {
         try {
             $pdo = Database::connection();
     
-            $stmt = $pdo->prepare("UPDATE RELEVEHSUPP SET Statut = 'Valide'
-                WHERE idHeureSupp = :id");
-    
+            // 1. Mettre à jour le statut à "Valide"
+            $stmt = $pdo->prepare("UPDATE RELEVEHSUPP SET Statut = 'Valide' WHERE idHeureSupp = :id");
             $stmt->bindParam(':id', $this->idHeureSupp, PDO::PARAM_INT);
-
             $stmt->execute();
     
+            // 2. Si conversion en congé, ajouter des jours au solde de l'employé
+            if ($this->ConversionType == 'conge') {
+                // Conversion : 8h = 1 jour 
+                $joursAjoutes = $this->NbreHeure / 8.0;
+    
+                if ($joursAjoutes > 0) {
+                    $stmt = $pdo->prepare("UPDATE EMPLOYES SET soldeCongeHeureSupp = soldeCongeHeureSupp + :jours WHERE idEmploye = :idEmploye");
+                    $stmt->bindParam(':jours', $joursAjoutes, PDO::PARAM_INT);
+                    $stmt->bindParam(':idEmploye', $this->idEmploye, PDO::PARAM_INT);
+                    $stmt->execute();
+                }
+            }
+    
             return true;
+    
         } catch (\Exception $e) {
-            throw new \Exception("Une erreur est survenue lors de la validation du relevé des heures supplémentaire : " . $e->getMessage());
+            throw new \Exception("Une erreur est survenue lors de la validation du relevé des heures supplémentaires : " . $e->getMessage());
         }
     }
+    
 
     public function reject(){
         try {

@@ -128,7 +128,10 @@ svg{
 }
 
 main{
-  padding: min(30px, 7%);
+  /* padding: min(30px, 7%); */
+  display: flex;
+  justify-content: center;
+  /* width: 100%; */
 }
 main p{
   color: var(--secondary-text-clr);

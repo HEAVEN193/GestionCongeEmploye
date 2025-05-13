@@ -44,6 +44,9 @@ $app->post('/heuresupp', [GestionController::class, 'reportHeureSupp']);
 $app->post('/validerHeureSupp/{id:[0-9]+}', [GestionController::class, 'validateOvertime']);
 $app->post('/refuserHeureSupp/{id:[0-9]+}', [GestionController::class, 'rejectOvertime']);
 
+$app->post('/validerConge/{id:[0-9]+}', [GestionController::class, 'approveLeave']);
+$app->post('/refuserConge/{id:[0-9]+}', [GestionController::class, 'rejectLeave']);
+
 
 $app->get('/login', [HomeController::class, 'showLoginPage']);
 $app->post('/login-attempt', [AuthController::class, 'login']);

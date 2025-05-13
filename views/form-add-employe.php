@@ -142,6 +142,8 @@ button:hover {
         <br>
 
         <button type="submit" class="btn-add">Ajouter</button>
+        <a href="/employe-manage-page" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
+
         <?php
             if(isset($_SESSION['error'])){
                 echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';

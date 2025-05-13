@@ -81,10 +81,25 @@
         <div class="col-md-6 mb-3">
           <div class="border rounded-3 p-3 h-100">
             <h6 class="mb-3">Solde de congés</h6>
-            <div>Vacances <strong>15 days</strong></div>
-            <div>Arrêt maladie <strong>10 days</strong></div>
-            <div>Personnel <strong>5 days</strong></div>
-            <div>Heure supplémentaire <strong>8 hours</strong></div>
+            <div>Congé restant (vacances) :<strong>
+            <?php
+                    $resultat = Employe::current()->SoldeConge;
+                    echo $resultat . " jours";    
+            ?>
+            </strong></div>
+            <div>Congé restant (heures supplémentaires) :<strong>
+            <?php
+                    $resultat = Employe::current()->SoldeCongeHeureSupp;
+                    echo $resultat . " jours";    
+            ?>
+            </strong></div>
+            <div>Jours congé total :<strong>
+            <?php
+                    $resultat = Employe::current()->SoldeConge + Employe::current()->SoldeCongeHeureSupp;
+                    echo $resultat . " jours";    
+            ?>
+            </strong></div>
+            <div>Heure supplémentaire :<strong>8 hours</strong></div>
           </div>
         </div>
         <div class="col-md-6 mb-3">

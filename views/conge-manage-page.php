@@ -21,11 +21,11 @@
     <div class="card shadow-sm">
       <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
       <?php if (Employe::current()->getRole()->NomRole == 'Employe'): ?>  
-      <h5 class="mb-0">Mes soumissions d'heure supplémentaires</h5>
+      <h5 class="mb-0">Mes demandes de congés</h5>
       <?php elseif(Employe::current()->getRole()->NomRole == 'Manager'): ?>
-        <h5 class="mb-0">Relevé d'heure supplémentaires du département</h5>
+        <h5 class="mb-0">Demandes de congés du département</h5>
       <?php else: ?>
-        <h5 class="mb-0">Tout les relevé d'heure supplémentaires</h5>
+        <h5 class="mb-0">Toute les demandes de congés</h5>
 
 
         <?php endif; ?>
@@ -45,22 +45,24 @@
           <table class="table table-bordered align-middle">
             <thead class="table-light">
               <tr>
+                <th scope="col">Employe</th>
                 <th scope="col">Type</th>
                 <th scope="col">Durée</th>
                 <th scope="col">Date début</th>
                 <th scope="col">Date fin</th>
                 <th scope="col">Statut</th>
+                <th scope="col">Etat</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
             <?php foreach ($conges as $conges): ?>
             <tr>
+                <td><?= htmlspecialchars($conges->getEmploye()->Pseudo) ?></td>
                 <td><?= htmlspecialchars($conges->TypeConge) ?></td>
-                <td><?= htmlspecialchars($conges->NbreJourDemande) ?></td>
+                <td><?= htmlspecialchars($conges->getDuree()) . " jours" ?></td>
                 <td><?= htmlspecialchars($conges->DateDebut) ?></td>
                 <td><?= htmlspecialchars($conges->DateFin) ?></td>
-                <td><?= htmlspecialchars($conges->Statut) ?></td>
                 <td>
                 <?php if ($conges->Statut === 'Valide'): ?>
                     <span class="badge bg-success">Validée</span>
@@ -70,9 +72,20 @@
                     <span class="badge bg-warning text-dark">En attente</span>
                 <?php endif; ?>
                 </td>
+                <td>
+                <?php $etat = $conges->getEtat(); ?>
+
+              <?php if ($etat === 'a venir'): ?>
+                  <span class="badge bg-secondary">À venir</span>
+              <?php elseif ($etat === 'en cours'): ?>
+                  <span class="badge bg-primary">En cours</span>
+              <?php elseif ($etat === 'passe'): ?>
+                  <span class="badge bg-dark">Passé</span>
+              <?php endif; ?>
+                </td>
 
                 <td class="text-end">
-                <?php if ($conges->Statut === 'En attente' && Employe::current()->getRole()->NomRole != 'Employe'): ?>
+                <?php if ($conges->Statut === 'En attente' && Employe::current()->getRole()->NomRole == 'Manager'): ?>
                     <div class="btn-group" role="group">
                         <form action="/validerConge/<?= $conges->idConge ?>" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-success btn-sm">

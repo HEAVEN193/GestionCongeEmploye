@@ -69,6 +69,15 @@ class GestionController extends BaseController {
     public function deleteEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) {
         $user = Employe::current();
 
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+        $user = Employe::current();
+
         if(!$user){
             return $response->withHeader('Location', '/login')->withStatus(302);
         }
@@ -85,6 +94,16 @@ class GestionController extends BaseController {
 
 
     public function updateEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $user = Employe::current();
+
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
         $employeId = $args['id'];
 
         // Nettoyage des champs modifiables uniquement
@@ -111,6 +130,15 @@ class GestionController extends BaseController {
     }
 
     public function addDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $user = Employe::current();
+
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
         $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_STRING);
         $idManager = ($_POST['manager'] === "0" || $_POST['manager'] === 0 || $_POST['manager'] == "null") ? null : $_POST['manager'];
 
@@ -120,6 +148,15 @@ class GestionController extends BaseController {
     }
 
     public function updateDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $user = Employe::current();
+
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
         $idDepartement = $args['id'];
         $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_STRING);
         $idManager = ($_POST['manager'] === "0" || $_POST['manager'] === 0 || $_POST['manager'] == "null") ? null : $_POST['manager'];
@@ -131,6 +168,15 @@ class GestionController extends BaseController {
     }
 
     public function deleteDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $user = Employe::current();
+
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Administrateur"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
         $idDepartement = $args['id'];
         Departement::delete($idDepartement);
         header('Location: /showDepartement');
@@ -151,6 +197,16 @@ class GestionController extends BaseController {
     }
 
     public function validateOvertime(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $user = Employe::current();
+
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Manager"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
         $idHeureSupp = $args['id'];
         $heureSupp = HeureSupplementaire::fetchById($idHeureSupp);
         $heureSupp->validate();
@@ -160,6 +216,16 @@ class GestionController extends BaseController {
     }
 
     public function rejectOvertime(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $user = Employe::current();
+
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Manager"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
         $idHeureSupp = $args['id'];
         $heureSupp = HeureSupplementaire::fetchById($idHeureSupp);
         $heureSupp->reject();
@@ -201,6 +267,42 @@ class GestionController extends BaseController {
                 'justification' => $justification
             ]);
         }
+    }
+
+    public function approveLeave(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $user = Employe::current();
+
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Manager"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
+        $idConge = $args['id'];
+        $conge = Conge::fetchById($idConge);
+        $conge->validate();
+        header('Location: /conge-manage-page');
+        exit;
+    }
+
+    public function rejectLeave(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+        $user = Employe::current();
+
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        if($user->getRole()->NomRole != "Manager"){
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+        
+        $idConge = $args['id'];
+        $conge = Conge::fetchById($idConge);
+        $conge->validate();
+        header('Location: /conge-manage-page');
+        exit;
     }
 
 
