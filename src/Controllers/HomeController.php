@@ -65,7 +65,6 @@ class HomeController extends BaseController {
         if($user->getRole()->NomRole != "Administrateur"){
             return $response->withHeader('Location', '/')->withStatus(302);
         }
-
         $roles = Role::fetchAll();
         $departements = Departement::fetchAll();
         return $this->view->render($response, 'form-add-employe.php', ['roles' => $roles, 'departements' => $departements]);
@@ -81,7 +80,7 @@ class HomeController extends BaseController {
         if($user->getRole()->NomRole != "Administrateur"){
             return $response->withHeader('Location', '/')->withStatus(302);
         }
-        
+
         $employeId = $args['id'];
         $employe = Employe::fetchById($employeId);
         $roles = Role::fetchAll();
@@ -133,6 +132,11 @@ class HomeController extends BaseController {
         $employe = Employe::current();
         $conges = Conge::fetchByEmployeId($employe->idEmploye);
         return $this->view->render($response, 'conge-manage-page.php', ['conges' => $conges]);
+    }
+
+    public function showFormConge(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        return $this->view->render($response, 'form-add-conge.php');
     }
 
     public function showFormHeureSupp(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface

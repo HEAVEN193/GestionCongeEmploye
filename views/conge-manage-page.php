@@ -31,7 +31,7 @@
         <?php endif; ?>
 
         <?php if (Employe::current()->getRole()->NomRole == 'Employe'): ?>  
-        <a href="/form-heures-supp" class="btn btn-primary">
+        <a href="/form-conge" class="btn btn-primary">
           <i class="bi bi-calendar"></i> Soumettre un relevé
         </a>
         <?php endif; ?>
@@ -56,7 +56,7 @@
             <tbody>
             <?php foreach ($conges as $conges): ?>
             <tr>
-                <td><?= htmlspecialchars($conges->TypeCongeo) ?></td>
+                <td><?= htmlspecialchars($conges->TypeConge) ?></td>
                 <td><?= htmlspecialchars($conges->NbreJourDemande) ?></td>
                 <td><?= htmlspecialchars($conges->DateDebut) ?></td>
                 <td><?= htmlspecialchars($conges->DateFin) ?></td>
@@ -70,17 +70,16 @@
                     <span class="badge bg-warning text-dark">En attente</span>
                 <?php endif; ?>
                 </td>
-                <td><?= htmlspecialchars($conges->ConversionType) ?></td>
 
                 <td class="text-end">
                 <?php if ($conges->Statut === 'En attente' && Employe::current()->getRole()->NomRole != 'Employe'): ?>
                     <div class="btn-group" role="group">
-                        <form action="/validerHeureSupp/<?= $conges->idHeureSupp ?>" method="post" style="display:inline;">
+                        <form action="/validerConge/<?= $conges->idConge ?>" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-success btn-sm">
                             <i class="bi bi-check"></i> Approuver
                             </button>
                         </form>
-                        <form action="/refuserHeureSupp/<?= $conges->idHeureSupp ?>" method="post" style="display:inline;">
+                        <form action="/refuserConge/<?= $conges->idConge ?>" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-danger btn-sm">
                             <i class="bi bi-x"></i> Refuser
                             </button>

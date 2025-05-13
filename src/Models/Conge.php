@@ -29,193 +29,110 @@ use PDO;
  */
 class Conge
 {
-
     public $idConge;
-
-    public $NbreJoursAnnuel;
-
-    public $DateDebut;
-
-    public $DateFin;
-
+    public $idEmploye;
     public $TypeConge;
-
-    public $Etat;
-
+    public $DateDebut;
+    public $DateFin;
+    public $Justification;
+    public $Statut;
     public $NbreJourDemande;
 
-    public $NbreJourRestant;
-
-    public $idEmploye;
-
-
-    protected $employe = null;
-
-
-    public static function fetchAll() :array
+    /**
+     * Crée une nouvelle demande de congé.
+     */
+    public static function create($idEmploye, $typeConge, $dateDebut, $dateFin, $justification = null)
     {
-        $statement = Database::connection()->prepare("SELECT * FROM CONGES");
-        $statement->execute();
-        $statement->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
-        return $statement->fetchAll();
-    }
-
-    public static function fetchById(int $id):Conge|false
-    {
-        $statement = Database::connection()
-        ->prepare("SELECT * FROM CONGES WHERE idConge = :id");
-        $statement->execute([':id' => $id]);
-        $statement->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
-        return $statement->fetch();
-    }
-
-    public static function fetchByEmployeId(int $id) :array
-    {
-        $statement = Database::connection()->prepare("SELECT * FROM CONGES WHERE idEmploye = :id");
-        $statement->execute([':id' => $id]);
-        $statement->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
-        return $statement->fetchAll();
-    }
-
-    public static function fetchByIdDepartement(int $id) :array
-    {
-        $statement = Database::connection()->prepare("SELECT rs.*
-            FROM CONGES cs
-            JOIN EMPLOYES e ON cs.idEmploye = e.idEmploye
-            WHERE e.idDepartement = (
-                SELECT idDepartement
-                FROM EMPLOYES
-                WHERE idEmploye = :id
-            )");
-        $statement->execute([':id' => $id]);
-        $statement->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
-        return $statement->fetchAll();
-    }
-
-
-
-
-    public static function create($NbreJoursAnnuel, $DateDebut, $DateFin, $TypeConge, $NbreJourDemande, $NbreJourRestant, $idEmploye)
-    {
-        try {
-            $pdo = Database::connection();
-            $stmt = $pdo->prepare("INSERT INTO CONGES (NbreJoursAnnuel, DateDebut, DateFin, TypeConge, NbreJourDemande, NbreJourRestant, idEmploye)
-                                   VALUES (:NbreJoursAnnuel, :DateDebut, :DateFin, :TypeConge, :NbreJourDemande, :NbreJourRestant, :idEmploye)");
-    
-            // Liaison des paramètres
-            $stmt->bindParam(':NbreJoursAnnuel', $NbreJoursAnnuel);
-            $stmt->bindParam(':DateDebut', $DateDebut);
-            $stmt->bindParam(':DateFin', $DateFin);
-            $stmt->bindParam(':TypeConge', $TypeConge); 
-            $stmt->bindParam(':NbreJourDemande', $NbreJourDemande); 
-            $stmt->bindParam(':NbreJourRestant', $NbreJourRestant); 
-            $stmt->bindParam(':idEmploye', $idEmploye); 
-
-   
-    
-            // Exécution
-            $stmt->execute();
-    
-            return $pdo->lastInsertId();
-        } catch (\Exception $e) {
-            throw new \Exception("Une erreur est survenue lors de la création du conges : " . $e->getMessage());
+        if (empty($idEmploye) || empty($typeConge) || empty($dateDebut) || empty($dateFin)) {
+            throw new Exception("Tous les champs obligatoires doivent être remplis.");
         }
-    }
-    
-    
-    
 
-    
-    public function getEmploye() : Employe|null
+        $today = new \DateTime();
+        $start = new \DateTime($dateDebut);
+        $end = new \DateTime($dateFin);
+
+        if ($dateFin < $dateDebut) {
+            throw new Exception("La date de fin ne peut pas être antérieure à la date de début.");
+        }
+
+        if ($start < $today) {
+            throw new Exception("La date de début du congé doit être ultérieure à aujourd'hui.");
+        }
+
+        if ($end < $start) {
+            throw new Exception("La date de fin ne peut pas être antérieure à la date de début.");
+        }
+
+        // Calcul de la durée en jours
+        $interval = $start->diff($end);
+        $duree = $interval->days + 1;
+
+
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare("INSERT INTO CONGES (idEmploye, TypeConge, DateDebut, DateFin, Justification, NbreJourDemande) VALUES (:idEmploye, :type, :debut, :fin, :justification, :duree)");
+
+        $stmt->bindParam(':idEmploye', $idEmploye);
+        $stmt->bindParam(':type', $typeConge);
+        $stmt->bindParam(':debut', $dateDebut);
+        $stmt->bindParam(':fin', $dateFin);
+        $stmt->bindParam(':justification', $justification);
+        $stmt->bindParam(':duree', $duree);
+
+        $stmt->execute();
+
+        return $pdo->lastInsertId();
+    }
+
+    /**
+     * Récupère tous les congés.
+     */
+    public static function fetchAll(): array
     {
-        if(!$this->employe){
-            $this->employe = $this->idEmploye ? Employe::fetchById($this->idEmploye) : null;
+        $stmt = Database::connection()->prepare("SELECT * FROM CONGES");
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, static::class);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Récupère les congés d'un employé.
+     */
+    public static function fetchByEmployeId($idEmploye): array
+    {
+        $stmt = Database::connection()->prepare("SELECT * FROM CONGES WHERE idEmploye = :id");
+        $stmt->execute([':id' => $idEmploye]);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, static::class);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Met à jour le statut d'un congé (validé/refusé).
+     */
+    public static function updateStatut($idConge, $statut): bool
+    {
+        $pdo = Database::connection();
+
+        if (!in_array($statut, ['Valide', 'Refuse'])) {
+            throw new Exception("Statut de congé invalide.");
         }
-        return $this->employe;
+
+        $stmt = $pdo->prepare("UPDATE CONGES SET Statut = :statut WHERE idConge = :id");
+        return $stmt->execute([
+            ':statut' => $statut,
+            ':id' => $idConge
+        ]);
     }
 
-    public static function getTotalOvertimeByUserId($id){
-        $statement = Database::connection()->prepare(
-            "SELECT SUM(NbreHeure) AS heures
-            FROM RELEVEHSUPP
-            WHERE Statut = 'Valide'AND idEmploye = :idEmploye");
-        $statement->execute(['idEmploye' => $id]);
-        return $statement->fetch(PDO::FETCH_ASSOC);
+    /**
+     * Récupère un congé par son ID.
+     */
+    public static function fetchById(int $id): Conge|false
+    {
+        $stmt = Database::connection()->prepare("SELECT * FROM CONGES WHERE idConge = :id");
+        $stmt->execute([':id' => $id]);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, static::class);
+        return $stmt->fetch();
     }
-
-    public static function getOvertimereRejectedByUserId($id){
-        $statement = Database::connection()->prepare(
-            "SELECT SUM(NbreHeure) AS heures
-            FROM RELEVEHSUPP
-            WHERE Statut = 'Refuse'AND idEmploye = :idEmploye");
-        $statement->execute(['idEmploye' => $id]);
-        return $statement->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public static function getOvertimeConvertedToLeaveByUserId($id){
-        $statement = Database::connection()->prepare(
-            "SELECT SUM(NbreHeure) AS heures
-            FROM RELEVEHSUPP
-            WHERE Statut = 'Valide'AND idEmploye = :idEmploye AND ConversionType= 'conge' ");
-        $statement->execute(['idEmploye' => $id]);
-        return $statement->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public static function getOvertimeConvertedToPaymentByUserId($id){
-        $statement = Database::connection()->prepare(
-            "SELECT SUM(NbreHeure) AS heures
-            FROM RELEVEHSUPP
-            WHERE Statut = 'Valide'AND idEmploye = :idEmploye AND ConversionType= 'paiement' ");
-        $statement->execute(['idEmploye' => $id]);
-        return $statement->fetch(PDO::FETCH_ASSOC);
-    }
-    
-
-    
-    public function validate(){
-        try {
-            $pdo = Database::connection();
-    
-            $stmt = $pdo->prepare("UPDATE RELEVEHSUPP SET Statut = 'Valide'
-                WHERE idHeureSupp = :id");
-    
-            $stmt->bindParam(':id', $this->idHeureSupp, PDO::PARAM_INT);
-
-            $stmt->execute();
-    
-            return true;
-        } catch (\Exception $e) {
-            throw new \Exception("Une erreur est survenue lors de la validation du relevé des heures supplémentaire : " . $e->getMessage());
-        }
-    }
-
-    public function reject(){
-        try {
-            $pdo = Database::connection();
-    
-            $stmt = $pdo->prepare("UPDATE RELEVEHSUPP SET Statut = 'Refuse'
-                WHERE idHeureSupp = :id");
-    
-            $stmt->bindParam(':id', $this->idHeureSupp, PDO::PARAM_INT);
-
-            $stmt->execute();
-    
-            return true;
-        } catch (\Exception $e) {
-            throw new \Exception("Une erreur est survenue lors de la validation du relevé des heures supplémentaire : " . $e->getMessage());
-        }
-    }
-
-
-
-    
-
-
-
-  
-
-
-
-   
 
 }

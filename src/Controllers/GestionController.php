@@ -9,6 +9,8 @@ use Matteomcr\GestionCongeEmploye\Models\Employe;
 use Matteomcr\GestionCongeEmploye\Models\Role;
 use Matteomcr\GestionCongeEmploye\Models\Departement;
 use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
+use Matteomcr\GestionCongeEmploye\Models\Conge;
+
 
 
 class GestionController extends BaseController {
@@ -165,4 +167,41 @@ class GestionController extends BaseController {
         header('Location: /heuresupp-manage-page');
         exit;
     }
+
+    public function submitConge(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $user = Employe::current();
+
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        $data = $_POST;
+
+        $type = $data['typeConge'] ?? null;
+        $dateDebut = $data['dateDebut'] ?? null;
+        $dateFin = $data['dateFin'] ?? null;
+        $justification = $data['justification'] ?? null;
+
+        // Vérification des champs requis
+        if (empty($type) || empty($dateDebut) || empty($dateFin)) {
+            $_SESSION['error'] = "Veuillez remplir tous les champs obligatoires.";
+            return $this->view->render($response, 'form-add-conge.php');
+        }
+
+        try {
+            Conge::create($user->idEmploye, $type, $dateDebut, $dateFin, $justification);
+            return $response->withHeader('Location', '/conge-manage-page')->withStatus(302);
+        } catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            return $this->view->render($response, 'form-add-conge.php', [
+                'type' => $type,
+                'dateDebut' => $dateDebut,
+                'dateFin' => $dateFin,
+                'justification' => $justification
+            ]);
+        }
+    }
+
+
 }

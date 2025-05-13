@@ -19,20 +19,16 @@ $app->get('/form-update-employe/{id:[0-9]+}', [HomeController::class, 'showUpdat
 
 $app->get('/showDepartement', [HomeController::class, 'showAllDepartements']);
 $app->get('/form-add-departement', [HomeController::class, 'showAddDepartement']);
+
 $app->get('/form-update-departement/{id:[0-9]+}', [HomeController::class, 'showUpdateDepartement']);
 $app->get('/heuresupp-manage-page', [HomeController::class, 'showHeureSuppManage']);
 $app->get('/conge-manage-page', [HomeController::class, 'showCongeManage']);
+$app->get('/form-conge', [HomeController::class, 'showFormConge']);
+
+$app->post('/demande-conge', [GestionController::class, 'submitConge']);
 
 $app->get('/form-heures-supp', [HomeController::class, 'showFormHeureSupp']);
-
-
-
-
-
 $app->get('/profil', [HomeController::class, 'showProfilPage']);
-
-
-
 
 $app->post('/newEmploye', [GestionController::class, 'addEmploye']);
 $app->get('/deleteEmploye/{id:[0-9]+}', [GestionController::class, 'deleteEmploye']);
