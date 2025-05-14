@@ -216,7 +216,16 @@ public static function update($id, $nom, $prenom, $pseudo, $dateEmbauche, $statu
 
 
     public static function delete($employeId) {
+
         $pdo = Database::connection();
+        // Vérifier s’il est manager d’un département
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM DEPARTEMENT WHERE idManager = :id");
+        $stmt->execute([':id' => $employeId]);
+
+        if ($stmt->fetchColumn() > 0) {
+            throw new \Exception("Impossible de supprimer le manager d’un département.");
+        }
+        
         $statement = $pdo->prepare("DELETE FROM EMPLOYES WHERE idEmploye = ?");
         $statement->execute([$employeId]);
     }

@@ -68,28 +68,28 @@ class GestionController extends BaseController {
 
     public function deleteEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) {
         $user = Employe::current();
-
-        if (!$user) {
+    
+        if (!$user || $user->getRole()->NomRole !== "Administrateur") {
             return $response->withHeader('Location', '/login')->withStatus(302);
         }
-
-        if($user->getRole()->NomRole != "Administrateur"){
-            return $response->withHeader('Location', '/')->withStatus(302);
-        }
-        $user = Employe::current();
-
-        if(!$user){
-            return $response->withHeader('Location', '/login')->withStatus(302);
-        }
-
-        if($user->getRole()->NomRole != "Administrateur"){
-            return $response->withHeader('Location', '/')->withStatus(302);
-        }
-        
+    
         $employeId = $args['id'];
-        Employe::delete($employeId);
-        header('Location: /showEmploye');
-        exit;
+
+        // Vérifie si l'employé à supprimer existe
+        $employeASupprimer = Employe::fetchById($employeId);
+        if (!$employeASupprimer) {
+            $_SESSION['error'] = "L'employé spécifié n'existe pas.";
+            return $response->withHeader('Location', '/showEmploye')->withStatus(302);
+        }
+    
+        try {
+            Employe::delete($employeId);
+            $_SESSION['success'] = "Employé supprimé avec succès.";
+        } catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
+    
+        return $response->withHeader('Location', '/showEmploye')->withStatus(302);
     }
 
 

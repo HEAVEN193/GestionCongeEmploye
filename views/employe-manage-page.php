@@ -2,7 +2,12 @@
 use Matteomcr\GestionCongeEmploye\Models\Employe;
 ?>
 <head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
+        html *{
+            padding: 0;
+        }
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -180,6 +185,12 @@ tr:nth-child(even) {
             <?php endforeach; ?>
             </tbody>
         </table>
+        <?php
+            if(isset($_SESSION['error'])){
+                echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';
+                unset($_SESSION['error']); 
+            } 
+        ?>
        <?php 
        if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
         <a href="/form-add-employe" class="btn-add">Ajouter un utilisateur</a>
