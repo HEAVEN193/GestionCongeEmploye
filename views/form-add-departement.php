@@ -7,8 +7,11 @@
     
     <title>Ajouter un utilisateur</title>
     <style>
+        html *{
+            padding:0;
+        }
    body {
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
     margin: 0;
     background-color: #f4f4f4;
     /* padding: 20px; */

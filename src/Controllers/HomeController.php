@@ -163,19 +163,50 @@ class HomeController extends BaseController {
 
     public function showHeureSuppManage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
-        $employe = Employe::current();
-        $role = $employe->getRole()->NomRole;
+        $user = Employe::current();
 
-        if ($role === 'Administrateur') {
-            $heuresSupp = HeureSupplementaire::fetchAll(); // admin → tout
-        }elseif($role=== 'Manager'){
-            $departement = $employe->getDepartement();
-            $heuresSupp = HeureSupplementaire::fetchByIdDepartement($departement->idDepartement);
+        if (!$user) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
         }
-        else {
-            $heuresSupp = Employe::current()->getOvertimeReport(); // employé → que les siennes
+    
+    
+    
+        // Si Employé simple
+        if ($user->getRole()->NomRole === "Employe") {
+            return $response->withHeader('Location', '/')->withStatus(302);
         }
-        return $this->view->render($response, 'heureSupp-manage-page.php', ['heuresSupp' => $heuresSupp]);
+    
+        // Si Manager
+        if ($user->getRole()->NomRole === "Manager") {
+            $heuresSupp = HeureSupplementaire::fetchByIdDepartement($user->getDepartement()->idDepartement);
+            
+        }
+    
+        // Si Admin → peut filtrer
+        if ($user->getRole()->NomRole === "Administrateur") {
+            $heuresSupp = HeureSupplementaire::fetchAll();
+        
+           
+        }
+    
+        return $this->view->render($response, 'heureSupp-manage-page.php', [
+            'heuresSupp' => $heuresSupp,
+        ]);   
+        // $employe = Employe::current();
+        // $role = $employe->getRole()->NomRole;
+
+        
+
+        // if ($role === 'Administrateur') {
+        //     $heuresSupp = HeureSupplementaire::fetchAll(); // admin → tout
+        // }elseif($role=== 'Manager'){
+        //     $departement = $employe->getDepartement();
+        //     $heuresSupp = HeureSupplementaire::fetchByIdDepartement($departement->idDepartement);
+        // }
+        // else {
+        //     $heuresSupp = Employe::current()->getOvertimeReport(); // employé → que les siennes
+        // }
+        // return $this->view->render($response, 'heureSupp-manage-page.php', ['heuresSupp' => $heuresSupp]);
     }
 
     public function showCongeManage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface

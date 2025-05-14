@@ -2,6 +2,8 @@
 use Matteomcr\GestionCongeEmploye\Models\Employe;
 use Matteomcr\GestionCongeEmploye\Models\Departement;
 use Matteomcr\GestionCongeEmploye\Models\Role;
+use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
+
 
 
 ?>
@@ -391,9 +393,16 @@ tr:hover {
                 <h1>Gestion des heures supplémentaires</h1>
             </div>
             <div class="header-date">
-                Système d'Administration • <span id="current-date"></span>
+                <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
+                Système d'Administration • 
+                <?php else: ?>
+                    Système Manager • 
+                    <?php endif; ?>
+
+                <span id="current-date"></span>
             </div>
         </div>
+        
 
     <main class="main">
         <div class="container">
@@ -406,47 +415,7 @@ tr:hover {
                     <input type="text" placeholder="Rechercher un employé...">
                 </div>
                 
-                <form method="GET" action="/showEmploye">
-                    <div class="filter-group">
-                        
-                        
-                        <div class="filter-select">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                            </svg>
-                            <div class="filter-select">
-                                <select name="role" onchange="this.form.submit()">
-                                    <option value="">Tous les rôles</option>
-                                    <?php foreach (Role::fetchAll() as $role): ?>
-                                        <option value="<?= $role->idRole ?>" 
-                                        <?= isset($roleFiltre) && $roleFiltre == $role->idRole ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($role->NomRole) ?>
-                                    </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-                        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
-                        <div class="filter-select">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                            </svg>
-
-                            <div class="filter-select">
-                                <select name="departement" onchange="this.form.submit()">
-                                    <option value="">Tous les départements</option>
-                                    <?php foreach (Departement::fetchAll() as $dep): ?>
-                                        <option value="<?= $dep->idDepartement ?>" 
-                                        <?= isset($departementFiltre) && $departementFiltre == $dep->idDepartement ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($dep->NomDepartement) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            
-                        </div>
-                    <?php endif; ?>
-                </form>
+            
 
                     <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
 
@@ -462,7 +431,6 @@ tr:hover {
                     <?php endif; ?>
 
                 </div>
-            </div>
 
             <div class="employee-list">
                 <table>
@@ -473,7 +441,9 @@ tr:hover {
                             <th>Heure</th>
                             <th>Statut</th>
                             <th>Conversion</th>
-                            <th>Actions</th>
+                            <?php if (Employe::current()->getRole()->NomRole === 'Manager'): ?>
+                            <th class="actions">Actions</th>
+                            <?php endif; ?>
 
                         </tr>
                     </thead>
@@ -493,30 +463,36 @@ tr:hover {
                                 <?php endif; ?>
                               </td>
                             </td>
-                            <td><span class="badge badge-role"><?= htmlspecialchars($releve->ConversionType) ?></span></td>
+
+                            <td><span class="email"><?= htmlspecialchars($releve->ConversionType) ?></span></td>
                             
+                            <?php if (Employe::current()->getRole()->NomRole === 'Manager'): ?>
                             <td class="actions">
-                              <?php if ($releve->Statut === 'En attente' && Employe::current()->getRole()->NomRole == 'Manager'): ?>
+                              <?php if ($releve->Statut === 'En attente'): ?>
                                 <a href="/validerHeureSupp/<?= $releve->idHeureSupp ?>">
                                     <button class="btn-icon btn-edit" title="Modifier">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                        </svg>
-                                    </button>
-                                </a>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+
+                                    </button></a>
                                 <a href="/refuserHeureSupp/<?= $releve->idHeureSupp ?>">
                                     <button class="btn-icon btn-delete" title="Supprimer">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M3 6h18"></path>
-                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                        </svg>
-                                    </button>
-                                </a>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+
+                                    </button></a>
                                 <?php else: ?>
-                                  <em class="text-muted">Action non disponible</em>
+                                  <span >Action non disponible</span>
                                   
                                 </td>
+                                <?php endif; ?>
                                 <?php endif; ?>
                         </tr>
                         <!-- More employee rows would be dynamically added here -->

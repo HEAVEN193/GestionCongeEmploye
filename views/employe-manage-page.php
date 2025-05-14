@@ -357,7 +357,12 @@ tr:hover {
                 <h1>Gestion des Employés</h1>
             </div>
             <div class="header-date">
-                Système d'Administration • <span id="current-date"></span>
+            <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
+                Système d'Administration • 
+                <?php else: ?>
+                    Système Manager • 
+                    <?php endif; ?>
+                <span id="current-date"></span>
             </div>
         </div>
 
