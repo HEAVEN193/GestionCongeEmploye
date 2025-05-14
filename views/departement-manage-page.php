@@ -1,5 +1,13 @@
+<?php 
+use Matteomcr\GestionCongeEmploye\Models\Employe;
+use Matteomcr\GestionCongeEmploye\Models\Departement;
+use Matteomcr\GestionCongeEmploye\Models\Role;
 
+
+?>
 <head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
 body {
     font-family: Arial, sans-serif;
@@ -138,7 +146,9 @@ tr:nth-child(even) {
                     <th>ID</th>
                     <th>Nom</th>
                     <th>Manager</th>
+                    <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
                     <th>Edition</th>
+                    <?php endif; ?>
 
                 </tr>
             </thead>
@@ -149,6 +159,7 @@ tr:nth-child(even) {
                     <td><?= htmlspecialchars($departement->NomDepartement) ?></td>
                     <td><?= $departement->getManager() ? htmlspecialchars($departement->getManager()->Pseudo) : 'Aucun' ?></td>
 
+                    <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
 
                     <td class="td-edit">
                         <span>
@@ -163,11 +174,23 @@ tr:nth-child(even) {
                             </a>
                         </span>
                     </td> 
+                    <?php endif; ?>
+
                 </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
+        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
         <a href="/form-add-departement" class="btn-add">Ajouter un departement</a>
+        <?php endif; ?>
+
+        <?php
+            if(isset($_SESSION['error'])){
+                echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';
+                unset($_SESSION['error']); 
+            } 
+        ?>
+
     </div>
 </body>
 

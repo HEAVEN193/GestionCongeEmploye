@@ -123,7 +123,7 @@ $employe = Employe::current();
                                 <h6 class="card-title text-muted">Heures supp.</h6>
                                 <h2 class="card-text">
                                 <?php
-                                    echo $employe->getTotalOvertime()['heures'] ;
+                                    echo $employe->getTotalOvertime()['heures'] ?? 0;
                                   ?>
                                 </h2>
                             </div>

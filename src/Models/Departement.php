@@ -41,8 +41,25 @@ class Departement {
 
     public static function delete($idDepartement) {
         $pdo = Database::connection();
-        $statement = $pdo->prepare("DELETE FROM DEPARTEMENT WHERE idDepartement = ?");
-        $statement->execute([$idDepartement]);
+
+        // Vérifie s'il existe des employés liés à ce département
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM EMPLOYES WHERE idDepartement = :id");
+        $stmt->execute([':id' => $idDepartement]);
+
+        if ($stmt->fetchColumn() > 0) {
+            throw new \Exception("Impossible de supprimer ce département : des employés y sont encore assignés.");
+        }
+
+        // Vérifie s'il est assigné comme manager dans un autre département
+        $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM DEPARTEMENT WHERE idDepartement = :id AND idManager IS NOT NULL");
+        $stmt2->execute([':id' => $idDepartement]);
+
+        if ($stmt2->fetchColumn() > 0) {
+            throw new \Exception("Ce département est encore managé. Veuillez d'abord retirer le manager.");
+        }
+        // Suppression si tout est OK
+        $stmt = $pdo->prepare("DELETE FROM DEPARTEMENT WHERE idDepartement = :id");
+        $stmt->execute([':id' => $idDepartement]);
     }
 
     public static function update($id, $nom, $idManager)

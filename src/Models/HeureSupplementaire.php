@@ -89,12 +89,17 @@ class HeureSupplementaire
 
 
 
+ 
     public static function create($date, $NbreHeure, $ratio, $idEmploye, $conversionType)
     {
         try {
+            if ($NbreHeure <= 0) {
+                throw new \Exception("Le nombre d'heures supplémentaires doit être supérieur à 0.");
+            }
+    
             $pdo = Database::connection();
             $stmt = $pdo->prepare("INSERT INTO RELEVEHSUPP (DateSoumission, NbreHeure, RatioConversion, idEmploye, ConversionType)
-                                   VALUES (:dateSoumission, :nbreHeure, :ratioConversion, :idEmploye, :conversionType)");
+                                    VALUES (:dateSoumission, :nbreHeure, :ratioConversion, :idEmploye, :conversionType)");
     
             // Liaison des paramètres
             $stmt->bindParam(':dateSoumission', $date);
@@ -102,17 +107,16 @@ class HeureSupplementaire
             $stmt->bindParam(':ratioConversion', $ratio);
             $stmt->bindParam(':idEmploye', $idEmploye); 
             $stmt->bindParam(':conversionType', $conversionType); 
-
-   
     
             // Exécution
             $stmt->execute();
     
             return $pdo->lastInsertId();
         } catch (\Exception $e) {
-            throw new \Exception("Une erreur est survenue lors de la création du compte : " . $e->getMessage());
+            throw new \Exception($e->getMessage());
         }
     }
+    
     
     
     

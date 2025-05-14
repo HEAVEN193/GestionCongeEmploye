@@ -177,23 +177,48 @@ class GestionController extends BaseController {
         if($user->getRole()->NomRole != "Administrateur"){
             return $response->withHeader('Location', '/')->withStatus(302);
         }
-        $idDepartement = $args['id'];
-        Departement::delete($idDepartement);
+        
+        $id = $args['id'];
+
+        try {
+            Departement::delete($id);
+            $_SESSION['success'] = "Département supprimé avec succès.";
+        } catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
         header('Location: /showDepartement');
         exit;
     }
 
     public function reportHeureSupp(ServerRequestInterface $request, ResponseInterface $response, array $args) {
-        $date = $_POST['date'] ?? 0;
+        $date = $_POST['date'] ?? null;
         $heures = isset($_POST['heures']) ? (int)$_POST['heures'] : 0;
         $idEmploye = Employe::current()->idEmploye;
-        $ratioConversion = $heures / 8; 
-        $conversionType = $_POST['conversionType'] ?? [];
+        $conversionType = $_POST['conversionType'] ?? null;
 
+        $today = new \DateTime();
+        $inputDate = new \DateTime($date);
 
-        $reportToCreate = HeureSupplementaire::create($date, $heures, $ratioConversion, $idEmploye, $conversionType);
-        header('Location: /heuresupp-manage-page');
-        exit;
+        if ($inputDate > $today) {
+            $_SESSION['error'] = "La date ne peut pas être dans le futur.";
+            return $this->view->render($response, 'form-heure-supp.php');
+        }
+
+        // Vérifications
+        if (empty($date) || empty($conversionType)) {
+            $_SESSION['error'] = "Veuillez entrer une date, un nombre d'heures valide (> 0) et un type de conversion.";
+            return $this->view->render($response, 'form-heure-supp.php');
+        }
+
+        $ratioConversion = $heures / 8;
+
+    try {
+        HeureSupplementaire::create($date, $heures, $ratioConversion, $idEmploye, $conversionType);
+        return $response->withHeader('Location', '/heuresupp-manage-page')->withStatus(302);
+    } catch (\Exception $e) {
+        $_SESSION['error'] = $e->getMessage();
+        return $this->view->render($response, 'form-heure-supp.php');
+    }
     }
 
     public function validateOvertime(ServerRequestInterface $request, ResponseInterface $response, array $args) {
@@ -208,7 +233,12 @@ class GestionController extends BaseController {
         }
 
         $idHeureSupp = $args['id'];
+
         $heureSupp = HeureSupplementaire::fetchById($idHeureSupp);
+        if (!$heureSupp) {
+            return $response->withHeader('Location', '/showEmploye')->withStatus(302);
+        }
+
         $heureSupp->validate();
 
         header('Location: /heuresupp-manage-page');

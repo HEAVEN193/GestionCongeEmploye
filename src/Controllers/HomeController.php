@@ -36,22 +36,46 @@ class HomeController extends BaseController {
     {
         $user = Employe::current();
 
-        if(!$user){
+        if (!$user) {
             return $response->withHeader('Location', '/login')->withStatus(302);
         }
-
-        if($user->getRole()->NomRole == "Employe"){
+    
+        // Récupération des filtres GET
+        $queryParams = $request->getQueryParams();
+        $filterDepartement = $queryParams['departement'] ?? null;
+        $filterRole = $queryParams['role'] ?? null;
+    
+        // Si Employé simple
+        if ($user->getRole()->NomRole === "Employe") {
             return $response->withHeader('Location', '/')->withStatus(302);
         }
-
-        if($user->getRole()->NomRole == "Manager"){
+    
+        // Si Manager
+        if ($user->getRole()->NomRole === "Manager") {
             $employes = Employe::fetchByDepartement($user->getDepartement()->idDepartement);
+            if ($filterRole) {
+                $employes = array_filter($employes, fn($e) => $e->idRole == $filterRole);
+            }
         }
-
-        if($user->getRole()->NomRole == "Administrateur"){
+    
+        // Si Admin → peut filtrer
+        if ($user->getRole()->NomRole === "Administrateur") {
             $employes = Employe::fetchAll();
+        
+            // Appliquer les filtres
+            if ($filterDepartement) {
+                $employes = array_filter($employes, fn($e) => $e->idDepartement == $filterDepartement);
+            }
+            if ($filterRole) {
+                $employes = array_filter($employes, fn($e) => $e->idRole == $filterRole);
+            }
         }
-        return $this->view->render($response, 'employe-manage-page.php', ['employes' => $employes]);   
+    
+        return $this->view->render($response, 'employe-manage-page.php', [
+            'employes' => $employes,
+            'departementFiltre' => $filterDepartement,
+            'roleFiltre' => $filterRole
+        ]);   
     }
 
     public function showAddEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
@@ -130,7 +154,7 @@ class HomeController extends BaseController {
             return $response->withHeader('Location', '/login')->withStatus(302);
         }
 
-        if($user->getRole()->NomRole != "Administrateur"){
+        if($user->getRole()->NomRole == "Employe"){
             return $response->withHeader('Location', '/')->withStatus(302);
         }
         $departements = Departement::fetchAll();

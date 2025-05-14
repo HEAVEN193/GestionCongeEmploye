@@ -115,7 +115,12 @@ button:hover {
 
 
 
-    
+        <?php
+            if(isset($_SESSION['error'])){
+                echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';
+                unset($_SESSION['error']); 
+            } 
+        ?>
     </form>
 
 </body>
