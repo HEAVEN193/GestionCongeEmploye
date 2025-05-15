@@ -173,7 +173,7 @@ class HomeController extends BaseController {
     
         // Si Employé simple
         if ($user->getRole()->NomRole === "Employe") {
-            return $response->withHeader('Location', '/')->withStatus(302);
+            $heuresSupp = HeureSupplementaire::fetchByEmployeId($user->idEmploye);
         }
     
         // Si Manager

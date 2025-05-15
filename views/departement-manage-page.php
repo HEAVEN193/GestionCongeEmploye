@@ -1,163 +1,264 @@
 <?php 
 use Matteomcr\GestionCongeEmploye\Models\Employe;
-use Matteomcr\GestionCongeEmploye\Models\Departement;
-use Matteomcr\GestionCongeEmploye\Models\Role;
-
-
+use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
 ?>
+
 <head>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #3B82F6;
+      --color-primary-dark: #2563EB;
+      --color-success: #10B981;
+      --color-success-light: #D1FAE5;
+      --color-danger: #EF4444;
+      --color-danger-light: #FEE2E2;
+      --color-warning: #F59E0B;
+      --color-warning-light: #FEF3C7;
+      --color-gray-50: #F9FAFB;
+      --color-gray-100: #F3F4F6;
+      --color-gray-200: #E5E7EB;
+      --color-gray-300: #D1D5DB;
+      --color-gray-400: #9CA3AF;
+      --color-gray-500: #6B7280;
+      --color-gray-600: #4B5563;
+      --color-gray-700: #374151;
+      --color-gray-800: #1F2937;
+      --color-red-50: #FEF2F2;
+    --color-red-500: #EF4444;
+    --color-red-600: #DC2626;
+    --color-blue-50: #EFF6FF;
+    --color-blue-100: #DBEAFE;
+    --color-blue-500: #3B82F6;
+    --color-blue-600: #2563EB;
+      --color-gray-900: #111827;
+    }
 
-    <style>
+    html * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        html *{
-            padding: 0;
-        }
-body {
-    /* font-family: Arial, sans-serif; */
-    margin: 0;
-    /* background-color: #f4f4f4; */
-}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--color-gray-100);
+      color: var(--color-gray-900);
+    }
 
-h1 {
-    color: #333;
-    margin-bottom: 50px;
-}
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
 
-.container{
-    height:100%;
-    width: 80%;
-    min-width: 600px;
-    margin:auto;
-    overflow-x: auto;
-}
+    .header {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 30px;
-    
-}
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
 
-table, th, td {
-    border: 1px solid #ddd;
-}
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
 
-th, td {
-    padding: 8px;
-    text-align: left;
-}
+    .header-title svg {
+        color: var(--color-primary);
+    }
 
-th {
-    background-color: #333; /* Couleur plus sombre */
-    color: white;
-}
+    .header-title h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
 
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1rem;
+      background-color: var(--color-primary-dark);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
 
-.btn-edit, .btn-delete {
-    color: white;
-    border: none;
-    cursor: pointer;
-    display: inline-block;
-    width: 30px; /* Carré */
-    height: 30px;
-    font-size: 14px;
-    text-align: center;
-}
+    .main {
+      padding: 1.5rem 0;
+    }
 
-.btn-edit {
-    color: black;
-    border: 1px solid grey;
-    border-radius: 5px;
-    height:30px;
-    width: 30px;
-}
+    .employee-list {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
 
-.btn-delete {
-    border-radius: 5px;
-    background-color: #f44336; /* Rouge pour supprimer */
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-.btn-edit:before {
-    content: "\270E"; /* Symbole d'édition */
-    padding-left: 2px;
-}
+    th, td {
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
 
-.btn-delete:before {
-    content: "\2715"; /* Croix */
-}
+    .pseudo {
+        font-family: monospace;
+        color: var(--color-gray-500);
+    }
 
-.navbar {
-    background-color: #333; /* Couleur de fond */
-    overflow: hidden; 
-    width: 100%;
-    height: 70px;
-    margin-bottom: 30px;
-}
+    .text-light {
+        color: var(--color-gray-500);
+    }
 
-.navbar a {
-    color: white;
-    float: left; /* Alignement à gauche */
-    display: block; /* Affichage en bloc */
-    color: white; /* Couleur du texte */
-    text-align: center; /* Alignement du texte */
-    padding: 27px 20px; /* Espacement autour du texte */
-    text-decoration: none; /* Pas de soulignement */
-    
-}
+    .actions{
+        white-space: nowrap;
+        text-align: right;
+    }
 
-.navbar a:hover {
-    background-color: #ddd; /* Couleur de fond au survol */
-    color: black; /* Couleur du texte au survol */
-}
+    .badge {
+      display: inline-flex;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
 
-.btn-add {
-    padding: 10px 20px;
-    background-color: #4CAF50; /* Vert pour ajouter */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 100px;
-}
+    .badge-success {
+      background-color: var(--color-success-light);
+      color: var(--color-success);
+    }
 
-.btn-add:hover {
-    background-color: #45a049;
-}
+    .badge-danger {
+      background-color: var(--color-danger-light);
+      color: var(--color-danger);
+    }
 
-.td-edit {
-    display: flex;
-    justify-content: space-around;
-}
-    </style>
+    .badge-warning {
+      background-color: var(--color-warning-light);
+      color: var(--color-warning);
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.375rem;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+    }
+
+    .btn-success {
+    color: var(--color-success);
+    background-color: var(--color-success-light);
+    }
+
+    .btn-success:hover {
+        background-color: var(--color-success-light);
+        filter: brightness(0.95);
+    }
+
+    .btn-danger {
+        color: var(--color-danger);
+        background-color: var(--color-danger-light);
+    }
+
+    .btn-danger:hover {
+        background-color: var(--color-danger-light);
+        filter: brightness(0.95);
+    }
+
+    .text-muted {
+        color: var(--color-gray-400);
+        font-style: italic;
+        font-size: 0.875rem;
+    }
+    .btn-icon {
+        padding: 0.25rem;
+        border: none;
+        background: none;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-edit {
+        color: var(--color-blue-600);
+    }
+
+    .btn-edit:hover {
+        background-color: var(--color-blue-50);
+    }
+
+    .btn-delete {
+        color: var(--color-red-500);
+    }
+
+    .btn-delete:hover {
+        background-color: var(--color-red-50);
+    }
+  </style>
 </head>
 
-
 <body>
+  <div class="container">
+    <header class="header">
+      <div class="header-content">
+        <div class="header-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <h1>Liste des département</h1>
+       
 
 
-<div class="container">
-    <h1>Liste des departements</h1>
+        </div>
+        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
+        <a href="/form-add-departement">
+          <button class="btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Ajouter un departement
+          </button>
+        </a>
+        <?php endif; ?>
+      </div>
+    </header>
 
-
-    <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Manager</th>
-                    <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
-                    <th>Edition</th>
-                    <?php endif; ?>
-
-                </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($departements as $departement): ?>
+    <main class="main">
+      <div class="employee-list">
+        <table>
+          <thead>
+            <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Manager</th>
+            <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
+            <th>Edition</th>
+            <?php endif; ?>
+            </tr>
+          </thead>
+          <tbody>
+          <?php foreach ($departements as $departement): ?>
                 <tr>
                     <td><?= htmlspecialchars($departement->idDepartement) ?></td>
                     <td><?= htmlspecialchars($departement->NomDepartement) ?></td>
@@ -165,36 +266,39 @@ tr:nth-child(even) {
 
                     <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
 
-                    <td class="td-edit">
+                    <td class="actions">
                         <span>
                             <a href="/form-update-departement/<?= $departement->idDepartement ?>">
-                                <button class="btn-edit" ></button>
-                            </a>
+                            <button class="btn-icon btn-edit" title="Modifier">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                        </svg>
+                                    </button></a>
                         </span>
                         
                         <span>
                             <a href="/deleteDepartement/<?= $departement->idDepartement ?>">
-                                <button class="btn-delete"></button>
-                            </a>
+                            <button class="btn-icon btn-delete" title="Supprimer">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 6h18"></path>
+                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                        </svg>
+                                    </button></a>
                         </span>
                     </td> 
                     <?php endif; ?>
 
                 </tr>
             <?php endforeach; ?>
-            </tbody>
+          </tbody>
         </table>
-        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
-        <a href="/form-add-departement" class="btn-add">Ajouter un departement</a>
+        <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger mt-3" role="alert">
+          <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+        </div>
         <?php endif; ?>
-
-        <?php
-            if(isset($_SESSION['error'])){
-                echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';
-                unset($_SESSION['error']); 
-            } 
-        ?>
-
-    </div>
+      </div>
+    </main>
+  </div>
 </body>
-

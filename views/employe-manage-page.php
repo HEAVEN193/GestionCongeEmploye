@@ -492,9 +492,7 @@ tr:hover {
                     } 
                 ?>
        
-                <!-- <div class="table-footer">
-                    <span>1 employé au total</span>
-                </div> -->
+               
             </div>
         </div>
     </main>

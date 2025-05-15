@@ -111,7 +111,7 @@ button:hover {
         <br>
 
         <button type="submit" class="btn-add">Modifier</button>
-        <a href="/departement-manage-page" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
+        <a href="/showDepartement" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
 
 
 
