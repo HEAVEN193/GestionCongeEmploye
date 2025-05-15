@@ -327,6 +327,7 @@
                         Membre dévoué de l'équipe travaillant en collaboration avec ses collègues pour atteindre les objectifs du projet et de l'entreprise.
                     </p>
                 </div>
+                <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
                 
                 <div class="stats-grid">
                     <div class="stats-card">
@@ -425,6 +426,11 @@
                         </div>
                     </div>
                 </div>
+          <?php endif; ?>
+
+                <form action="/logout" method="get">
+              <button type="submit" class="btn btn-outline-danger mt-4">Se déconnecter</button>
+              </form>
             </div>
         </div>
     </div>

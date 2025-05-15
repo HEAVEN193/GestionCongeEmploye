@@ -136,20 +136,24 @@ class Conge
         return $stmt->fetchAll();
     }
 
-    public static function fetchByIdDepartement(int $idEmploye) : array
+    public static function fetchByDepartementId(int $idDepartement): array
     {
         $stmt = Database::connection()->prepare("
             SELECT c.*
             FROM CONGES c
             JOIN EMPLOYES e ON c.idEmploye = e.idEmploye
-            WHERE e.idDepartement = (
-                SELECT idDepartement
-                FROM EMPLOYES
-                WHERE idEmploye = :id
-            )
+            WHERE e.idDepartement = :idDepartement
         ");
-        $stmt->execute([':id' => $idEmploye]);
+        $stmt->execute([':idDepartement' => $idDepartement]);
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::class);
+        return $stmt->fetchAll();
+    }
+
+    public static function fetchByType($nomType): array
+    {
+        $stmt = Database::connection()->prepare("SELECT * FROM CONGES WHERE TypeConge = :nom");
+        $stmt->execute([':nom' => $nomType]);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, static::class);
         return $stmt->fetchAll();
     }
 

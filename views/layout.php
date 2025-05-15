@@ -95,6 +95,7 @@
           <span>Profile</span>
         </a>
       </li>
+
     </ul>
   </nav>
   <main class="main">

@@ -1,6 +1,9 @@
 <?php 
 use Matteomcr\GestionCongeEmploye\Models\Employe;
 use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
+use Matteomcr\GestionCongeEmploye\Models\Role;
+use Matteomcr\GestionCongeEmploye\Models\Departement;
+use Matteomcr\GestionCongeEmploye\Models\Conge;
 ?>
 
 <head>
@@ -88,6 +91,113 @@ use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
       font-size: 0.875rem;
       cursor: pointer;
     }
+    /* Filter bar styles */
+    .filter-bar {
+        background: white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 200px;
+        position: relative;
+    }
+
+    .search-box svg {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-gray-400);
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+        border: 1px solid var(--color-gray-200);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: var(--color-blue-500);
+        box-shadow: 0 0 0 3px var(--color-blue-100);
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-select {
+        position: relative;
+    }
+
+    .filter-select svg {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-gray-400);
+        pointer-events: none;
+    }
+
+    .filter-select select {
+        padding: 0.5rem 2rem 0.5rem 2.5rem;
+        border: 1px solid var(--color-gray-200);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        background-color: white;
+        cursor: pointer;
+        appearance: none;
+    }
+
+    .filter-select select:focus {
+        outline: none;
+        border-color: var(--color-blue-500);
+        box-shadow: 0 0 0 3px var(--color-blue-100);
+    }
+
+    .filter-select::after {
+        content: '';
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid var(--color-gray-400);
+        pointer-events: none;
+    }
+
+    .btn-add {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-blue-600);
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .btn-add:hover {
+      background-color: var(--color-blue-500);
+  }
 
     .main {
       padding: 1.5rem 0;
@@ -199,28 +309,86 @@ use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
             <circle cx="12" cy="12" r="10"/>
             <polyline points="12 6 12 12 16 14"/>
           </svg>
-        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
-          <h1>Mes demandes de congés</h1>
-        <?php else: ?>
-            <h1>Demandes de congés</h1>
-        <?php endif; ?>
+          <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
+            <h1>Mes demandes de congés</h1>
+          <?php else: ?>
+              <h1>Demandes de congés</h1>
+          <?php endif; ?>
 
 
         </div>
+
         <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
-        <a href="/form-add-employe">
+        <a href="/form-conge">
           <button class="btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            Soumettre un relevé
+            Soumettre une demande
           </button>
         </a>
-        <?php endif; ?>
+          
+          <?php endif; ?>
       </div>
     </header>
+      <?php if (Employe::current() && Employe::current()->getRole()->NomRole != "Employe"): ?>
+        <div class="filter-bar">
+                
+                
+                <form method="GET" action="/conge-manage-page">
+                    <div class="filter-group">
+                        
+                    <!-- Filtre période -->
+                      <div class="filter-select">
+                          <label for="dateDebut">Du :</label>
+                          <input type="date" name="dateDebut" value="<?= htmlspecialchars($_GET['dateDebut'] ?? '') ?>" onchange="this.form.submit()">
+                      </div>
 
+                      <div class="filter-select">
+                          <label for="dateFin">Au :</label>
+                          <input type="date" name="dateFin" value="<?= htmlspecialchars($_GET['dateFin'] ?? '') ?>" onchange="this.form.submit()">
+                      </div>
+                        
+                        <div class="filter-select">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                            <div class="filter-select">
+                                <select name="type" onchange="this.form.submit()">
+                                    <option value="">Tous les congé</option>
+                                    <option value="vacances" <?= isset($typeFiltre) && $typeFiltre == "vacances" ? 'selected' : '' ?>>vacances</option>
+                                    <option value="conversion" <?= isset($typeFiltre) && $typeFiltre == "conversion" ? 'selected' : '' ?>>conversion</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filter-select">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+
+                            <div class="filter-select">
+                                <select name="departement" onchange="this.form.submit()">
+                                    <option value="">Tous les départements</option>
+                                    <?php foreach (Departement::fetchAll() as $dep): ?>
+                                        <option value="<?= $dep->idDepartement ?>" 
+                                        <?= isset($departementFiltre) && $departementFiltre == $dep->idDepartement ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($dep->NomDepartement) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            
+                        </div>
+                      </form>
+                      
+                      
+                      
+                    </div>
+                  </div>
+                  <?php endif; ?>
+          
+                  
     <main class="main">
       <div class="employee-list">
         <table>

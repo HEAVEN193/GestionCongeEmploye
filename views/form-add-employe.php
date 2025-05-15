@@ -7,6 +7,10 @@
 
     <title>Ajouter un utilisateur</title>
     <style>
+    
+    html *{
+        padding:0;
+    }
    body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -142,7 +146,7 @@ button:hover {
         <br>
 
         <button type="submit" class="btn-add">Ajouter</button>
-        <a href="/employe-manage-page" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
+        <a href="/showEmploye" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
 
         <?php
             if(isset($_SESSION['error'])){

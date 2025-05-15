@@ -23,7 +23,7 @@ body{
   color: var(--text-clr);
   display: grid;
   grid-template-columns: auto 1fr;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 #sidebar{
   box-sizing: border-box;
@@ -32,7 +32,6 @@ body{
   padding: 5px 1em;
   background-color: var(--nav-clr);
   border-right: 1px solid var(--line-clr);
-
   position: sticky;
   top: 0;
   align-self: start;
@@ -131,7 +130,7 @@ main{
   /* padding: min(30px, 7%); */
   /* display: flex;
   justify-content: center; */
-  width: 100%;
+  /* width: 100%; */
 }
 main p{
   color: var(--secondary-text-clr);

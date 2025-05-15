@@ -253,7 +253,7 @@ use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
             <th>Nom</th>
             <th>Manager</th>
             <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
-            <th>Edition</th>
+            <th class="actions">Edition</th>
             <?php endif; ?>
             </tr>
           </thead>

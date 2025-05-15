@@ -20,8 +20,22 @@ class HomeController extends BaseController {
     public function showHomePage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
         // Si l'utilisateur n'est pas connécté -> renvoie page login
-        if(Employe::current())
-            return $this->view->render($response, 'home-page.php');
+        if(Employe::current()){
+            $conges = Conge::fetchAll();
+            $eventsFromPHP = [];
+            
+            foreach ($conges as $conge) {
+                $employe = $conge->getEmploye();
+                $eventsFromPHP[] = [
+                    'date' => $conge->DateDebut,
+                    'title' => "Congé ". $employe->Pseudo,
+                    'type' => "conge "
+                ];
+            }
+            return $this->view->render($response, 'home-page.php', [
+                'eventsFromPHP' => $eventsFromPHP
+            ]);
+        }
         else    
             return $response->withHeader('Location', '/login')->withStatus(302);
     }
@@ -93,6 +107,7 @@ class HomeController extends BaseController {
         $departements = Departement::fetchAll();
         return $this->view->render($response, 'form-add-employe.php', ['roles' => $roles, 'departements' => $departements]);
     }
+
     public function showUpdateEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
         
@@ -214,20 +229,48 @@ class HomeController extends BaseController {
         $employe = Employe::current();
         $role = $employe->getRole()->NomRole;
 
+        if (!$employe) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        $queryParams = $request->getQueryParams();
+        $filterDepartement = $queryParams['departement'] ?? null;
+        $filterType = $queryParams['type'] ?? null;
+        $filterDateDebut = $queryParams['dateDebut'] ?? null;
+        $filterDateFin = $queryParams['dateFin'] ?? null;
+
+
         if ($role === 'Administrateur') {
-            $conges = Conge::fetchAll(); // admin → tout
-        }elseif($role=== 'Manager'){
+            $conges = Conge::fetchAll(); // Charge tout
+
+            if ($filterDepartement) {
+                $conges = array_filter($conges, fn($c) => $c->getEmploye()->idDepartement == $filterDepartement);
+            }
+
+            if ($filterType) {
+                $conges = array_filter($conges, fn($c) => $c->TypeConge == $filterType);
+            }
+
+            if ($filterDateDebut && $filterDateFin) {
+                $conges = array_filter($conges, fn($c) =>
+                    $c->DateDebut >= $filterDateDebut && $c->DateFin <= $filterDateFin
+                );
+            }
+        }
+        elseif($role=== 'Manager'){
             $departement = $employe->getDepartement();
-            $conges = Conge::fetchByIdDepartement($departement->idDepartement);
+            $conges = Conge::fetchByDepartementId($employe->idEmploye);
         }
         else {
             $conges = Conge::fetchByEmployeId($employe->idEmploye); // employé → que les siennes
         }
-        return $this->view->render($response, 'conge-manage-page.php', ['conges' => $conges]);
+        return $this->view->render($response, 'conge-manage-page.php', [
+            'conges' => $conges,
+            'departementFiltre' => $filterDepartement,
+            'typeFiltre' => $filterType
+        ]);
 
 
-        $conges = Conge::fetchByEmployeId($employe->idEmploye);
-        return $this->view->render($response, 'conge-manage-page.php', ['conges' => $conges]);
     }
 
     public function showFormConge(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
@@ -261,6 +304,12 @@ class HomeController extends BaseController {
 
     public function showProfilPage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
+        $user = Employe::current();
+
+        if(!$user){
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
         return $this->view->render($response, 'profil.php');
     }
 

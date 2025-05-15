@@ -203,7 +203,7 @@ use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
 
         </div>
         <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
-        <a href="/form-add-employe">
+        <a href="/form-heures-supp">
           <button class="btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
@@ -248,25 +248,30 @@ use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
               </td>
               <td><?= htmlspecialchars($releve->ConversionType) ?></td>
               <?php if (Employe::current()->getRole()->NomRole === 'Manager'): ?>
-              <td class="actions">
+                <td class="actions">
                 <?php if ($releve->Statut === 'En attente'): ?>
-                <a href="/validerHeureSupp/<?= $releve->idHeureSupp ?>">
-                  <button class="btn-icon btn-success" title="Approuver">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                  </button></a>
-                <a href="/refuserHeureSupp/<?= $releve->idHeureSupp ?>">
-                  <button class="btn-icon btn-danger" title="Refuser">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"/>
-                      <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                  </button></a>
+                    <form action="/validerHeureSupp/<?= $releve->idHeureSupp ?>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn-icon btn-success" title="Approuver">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </button>
+                    </form>
+
+                    <form action="/refuserHeureSupp/<?= $releve->idHeureSupp ?>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn-icon btn-danger" title="Refuser">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                    </form>
                 <?php else: ?>
-                <span class="text-muted">Action non disponible</span>
+                    <span class="text-muted">Action non disponible</span>
                 <?php endif; ?>
-              </td>
+                </td>
               <?php endif; ?>
             </tr>
             <?php endforeach; ?>
