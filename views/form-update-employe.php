@@ -5,11 +5,16 @@
 
     <title>Ajouter un utilisateur</title>
     <style>
+
+    html *{
+        padding: 0;
+
+    }
    body {
     font-family: Arial, sans-serif;
     margin: 0;
     background-color: #f4f4f4;
-    padding: 20px;
+    /* padding: 20px; */
 }
 
 .navbar {
@@ -138,7 +143,7 @@ button:hover {
         <br>
 
         <button type="submit" class="btn-add">Modifier</button>
-        <a href="/showEmploye" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
+        <a href="/employes" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
 
         <?php
             if(isset($_SESSION['error'])){

@@ -13,21 +13,21 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 $app->get('/', [HomeController::class, 'showHomePage']);
 $app->get('/layout', [HomeController::class, 'showLayout']);
 
-$app->get('/showEmploye', [HomeController::class, 'showAllEmployes']);
+$app->get('/employes', [HomeController::class, 'showEmployesPage']);
 $app->get('/form-add-employe', [HomeController::class, 'showAddEmploye']);
 $app->get('/form-update-employe/{id:[0-9]+}', [HomeController::class, 'showUpdateEmploye']);
 
-$app->get('/showDepartement', [HomeController::class, 'showAllDepartements']);
+$app->get('/showDepartement', [HomeController::class, 'showDepartementsPage']);
 $app->get('/form-add-departement', [HomeController::class, 'showAddDepartement']);
 
 $app->get('/form-update-departement/{id:[0-9]+}', [HomeController::class, 'showUpdateDepartement']);
-$app->get('/heuresupp-manage-page', [HomeController::class, 'showHeureSuppManage']);
-$app->get('/conge-manage-page', [HomeController::class, 'showCongeManage']);
-$app->get('/form-conge', [HomeController::class, 'showFormConge']);
+$app->get('/heuresupp-manage-page', [HomeController::class, 'showOvertimePage']);
+$app->get('/conge-manage-page', [HomeController::class, 'showLeavePage']);
+$app->get('/form-conge', [HomeController::class, 'showFormLeave']);
 
 $app->post('/demande-conge', [GestionController::class, 'submitConge']);
 
-$app->get('/form-heures-supp', [HomeController::class, 'showFormHeureSupp']);
+$app->get('/form-heures-supp', [HomeController::class, 'showFormOvertime']);
 $app->get('/profil', [HomeController::class, 'showProfilPage']);
 
 $app->post('/newEmploye', [GestionController::class, 'addEmploye']);

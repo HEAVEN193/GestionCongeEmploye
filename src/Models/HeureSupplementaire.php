@@ -2,28 +2,16 @@
 
 namespace Matteomcr\GestionCongeEmploye\Models;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 use Matteomcr\GestionCongeEmploye\Models\Database;
 use Matteomcr\GestionCongeEmploye\Models\Role;
 use Matteomcr\GestionCongeEmploye\Models\Departement;
 use Matteomcr\GestionCongeEmploye\Models\Employe;
-
-
-
-
-
-
 use Exception;
 use PDO;
 
 /**
- * Classe représentant un utilisateur de l'application.
- * 
- * Cette classe gère les informations relatives à un utilisateur, telles que son pseudo, son email,
- * et son mot de passe. Elle permet également de récupérer les statistiques de l'utilisateur,
- * vérifier si un email existe déjà, et gérer les connexions et créations de comptes.
+ * Classe représentant une heure supplémentaire déclarée par un employé.
+ * Permet de créer, récupérer et valider ou refuser les heures supplémentaires.
  */
 class HeureSupplementaire
 {
@@ -42,10 +30,13 @@ class HeureSupplementaire
 
     public $ConversionType;
 
-
     protected $employe = null;
 
 
+     /**
+     * Récupère toutes les heures supplémentaires.
+     * @return HeureSupplementaire[]
+     */
     public static function fetchAll() :array
     {
         $statement = Database::connection()->prepare("SELECT * FROM RELEVEHSUPP");
@@ -54,6 +45,11 @@ class HeureSupplementaire
         return $statement->fetchAll();
     }
 
+    /**
+     * Récupère une heure supplémentaire par son identifiant.
+     * @param int $id
+     * @return HeureSupplementaire|false
+     */
     public static function fetchById(int $id) :HeureSupplementaire|false
     {
         $statement = Database::connection()
@@ -63,6 +59,11 @@ class HeureSupplementaire
         return $statement->fetch();
     }
 
+    /**
+     * Récupère toutes les heures supplémentaires d'un employé.
+     * @param int $id Identifiant de l'employé.
+     * @return HeureSupplementaire[]
+     */
     public static function fetchByEmployeId(int $id) :array
     {
         $statement = Database::connection()->prepare("SELECT * FROM RELEVEHSUPP WHERE idEmploye = :id");
@@ -71,6 +72,11 @@ class HeureSupplementaire
         return $statement->fetchAll();
     }
 
+    /**
+     * Récupère toutes les heures supplémentaires associées au département d'un employé.
+     * @param int $id Identifiant de l'employé.
+     * @return HeureSupplementaire[]
+     */
     public static function fetchByIdDepartement(int $id) :array
     {
         $statement = Database::connection()->prepare("SELECT rs.*
@@ -86,10 +92,15 @@ class HeureSupplementaire
         return $statement->fetchAll();
     }
 
-
-
-
- 
+    /**
+     * Crée une déclaration d'heure supplémentaire.
+     * @param string $date Date de soumission.
+     * @param float $NbreHeure Nombre d'heures soumises.
+     * @param float $ratio Ratio de conversion appliqué.
+     * @param int $idEmploye Identifiant de l'employé.
+     * @param string $conversionType Type de conversion (paiement/congé).
+     * @return int Identifiant de la déclaration créée.
+     */
     public static function create($date, $NbreHeure, $ratio, $idEmploye, $conversionType)
     {
         try {
@@ -116,12 +127,11 @@ class HeureSupplementaire
             throw new \Exception($e->getMessage());
         }
     }
-    
-    
-    
-    
 
-    
+    /**
+     * Retourne l'objet Employe associé à cette déclaration.
+     * @return Employe|null
+     */
     public function getEmploye() : Employe|null
     {
         if(!$this->employe){
@@ -130,6 +140,11 @@ class HeureSupplementaire
         return $this->employe;
     }
 
+    /**
+     * Calcule le total des heures supplémentaires validées d'un employé.
+     * @param int $id Identifiant de l'employé.
+     * @return array Résultat contenant la somme.
+     */
     public static function getTotalOvertimeByUserId($id){
         $statement = Database::connection()->prepare(
             "SELECT SUM(NbreHeure) AS heures
@@ -139,6 +154,11 @@ class HeureSupplementaire
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Calcule le total des heures supplémentaires refusées d'un employé.
+     * @param int $id Identifiant de l'employé.
+     * @return array Résultat contenant la somme.
+     */
     public static function getOvertimereRejectedByUserId($id){
         $statement = Database::connection()->prepare(
             "SELECT SUM(NbreHeure) AS heures
@@ -148,6 +168,11 @@ class HeureSupplementaire
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Calcule le total des heures converties en congés.
+     * @param int $id Identifiant de l'employé.
+     * @return array Résultat contenant la somme.
+     */
     public static function getOvertimeConvertedToLeaveByUserId($id){
         $statement = Database::connection()->prepare(
             "SELECT SUM(NbreHeure) AS heures
@@ -157,6 +182,11 @@ class HeureSupplementaire
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Calcule le total des heures converties en paiement.
+     * @param int $id Identifiant de l'employé.
+     * @return array Résultat contenant la somme.
+     */
     public static function getOvertimeConvertedToPaymentByUserId($id){
         $statement = Database::connection()->prepare(
             "SELECT SUM(NbreHeure) AS heures
@@ -166,8 +196,12 @@ class HeureSupplementaire
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
     
-
-    
+    /**
+     * Valide une déclaration d'heure supplémentaire.
+     * Met à jour le statut et augmente le solde de congés si conversion.
+     * @return bool Succès ou échec.
+     * @throws Exception En cas d'erreur.
+     */
     public function validate() {
         try {
             $pdo = Database::connection();
@@ -198,6 +232,11 @@ class HeureSupplementaire
     }
     
 
+    /**
+     * Refuse une déclaration d'heure supplémentaire.
+     * @return bool Succès ou échec.
+     * @throws Exception En cas d'erreur.
+     */
     public function reject(){
         try {
             $pdo = Database::connection();

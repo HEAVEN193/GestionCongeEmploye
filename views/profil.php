@@ -247,7 +247,7 @@
             <div class="profile-card">
                 <div class="profile-header">
                     <div class="profile-image-container">
-                        <img src="https://i.pravatar.cc/150?img=1" alt="Photo de profil" class="profile-image">
+                        <img src="https://static.vecteezy.com/system/resources/thumbnails/030/504/836/small_2x/avatar-account-flat-isolated-on-transparent-background-for-graphic-and-web-design-default-social-media-profile-photo-symbol-profile-and-people-silhouette-user-icon-vector.jpg" alt="Photo de profil" class="profile-image">
                         <span class="status-indicator"></span>
                     </div>
                     
@@ -356,7 +356,8 @@
                                 <p class="leave-value purple">
                                 <?php
                                     $resultat = Employe::current()->getOvertimeConvertedToPayment();
-                                    echo $resultat['heures'] . " heures";    
+                                    $heures = isset($resultat['heures']) ? $resultat['heures'] : 0;
+                                    echo $heures . " heures";     
                                 ?>
                                 </p>
                             </div>
@@ -365,7 +366,8 @@
                                 <p class="leave-value orange">
                                 <?php
                                     $resultat = Employe::current()->getTotalOvertime();
-                                    echo $resultat['heures'] ." heures";    
+                                    $heures = isset($resultat['heures']) ? $resultat['heures'] : 0;
+                                    echo $heures . " heures";    
                                 ?>
                                 </p>
                             </div>
@@ -397,10 +399,15 @@
                                 <span>Heures supplémentaire(s) convertit en congé</span>
                                 <span>
                                 <?php
-                                    $totalHours = Employe::current()->getTotalOvertime()['heures'];
-                                    $convertToLeave = Employe::current()->getOvertimeConvertedToLeave()['heures'];
+                                    $totalOvertime = Employe::current()->getTotalOvertime();
+                                    $convertedLeave = Employe::current()->getOvertimeConvertedToLeave();
+                                
+                                    $totalHours = isset($totalOvertime['heures']) ? $totalOvertime['heures'] : 0;
+                                    $convertToLeave = isset($convertedLeave['heures']) ? $convertedLeave['heures'] : 0;
+                                
                                     $percentages = ($totalHours > 0) ? ($convertToLeave / $totalHours) * 100 : 0;
-                                    echo $convertToLeave . "/" . $totalHours;    
+                                
+                                    echo $convertToLeave . "/" . $totalHours; 
                                 ?>
                                 </span>
                             </div>
@@ -411,12 +418,15 @@
 
                         <div class="progress-container">
                             <div class="progress-header">
-                                <span>Heures supplémentaire(s) convertit en argement</span>
+                                <span>Heures supplémentaire(s) convertit en argent</span>
                                 <span>
                                 <?php
-                                    $convertToPay = Employe::current()->getOvertimeConvertedToPayment()['heures'];
-                                    $percentages = ($totalHours > 0) ? ($convertToPay / $totalHours) * 100 : 0;
-                                    echo $convertToPay . "/" . $totalHours;    
+                                      $converted = Employe::current()->getOvertimeConvertedToPayment();
+                                      $convertToPay = isset($converted['heures']) ? $converted['heures'] : 0;
+                                      $totalHours = isset($totalHours) ? $totalHours : 0;
+                                  
+                                      $percentages = ($totalHours > 0) ? ($convertToPay / $totalHours) * 100 : 0;
+                                      echo $convertToPay . "/" . $totalHours; 
                                 ?>
                                 </span>
                             </div>

@@ -50,7 +50,7 @@ class GestionController extends BaseController {
         try {
             Employe::create($nom, $prenom, $pseudo, $password, $email, $dateEmbauche, $statut, $idRole, $idDepartement);
             $_SESSION['success'] = "Employé ajouté avec succès.";
-            return $response->withHeader('Location', '/showEmploye')->withStatus(302);
+            return $response->withHeader('Location', '/employes')->withStatus(302);
         } catch (\Exception $e) {
             $_SESSION['error'] = $e->getMessage();
             return $this->view->render($response, 'form-add-employe.php', [
@@ -79,7 +79,7 @@ class GestionController extends BaseController {
         $employeASupprimer = Employe::fetchById($employeId);
         if (!$employeASupprimer) {
             $_SESSION['error'] = "L'employé spécifié n'existe pas.";
-            return $response->withHeader('Location', '/showEmploye')->withStatus(302);
+            return $response->withHeader('Location', '/employes')->withStatus(302);
         }
     
         try {
@@ -89,7 +89,7 @@ class GestionController extends BaseController {
             $_SESSION['error'] = $e->getMessage();
         }
     
-        return $response->withHeader('Location', '/showEmploye')->withStatus(302);
+        return $response->withHeader('Location', '/employes')->withStatus(302);
     }
 
 
@@ -117,7 +117,7 @@ class GestionController extends BaseController {
 
         try {
             Employe::update($employeId, $nom, $prenom, $pseudo, $dateEmbauche, $statut, $idRole, $idDepartement);
-            return $response->withHeader('Location', '/showEmploye')->withStatus(302);
+            return $response->withHeader('Location', '/employes')->withStatus(302);
         }catch (\Exception $e) {
             $_SESSION['error'] = $e->getMessage();
     
@@ -236,7 +236,7 @@ class GestionController extends BaseController {
 
         $heureSupp = HeureSupplementaire::fetchById($idHeureSupp);
         if (!$heureSupp) {
-            return $response->withHeader('Location', '/showEmploye')->withStatus(302);
+            return $response->withHeader('Location', '/employes')->withStatus(302);
         }
 
         $heureSupp->validate();
@@ -330,7 +330,7 @@ class GestionController extends BaseController {
         
         $idConge = $args['id'];
         $conge = Conge::fetchById($idConge);
-        $conge->validate();
+        $conge->reject();
         header('Location: /conge-manage-page');
         exit;
     }

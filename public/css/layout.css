@@ -8,10 +8,11 @@
   --secondary-text-clr: #b0b3c1;
   --nav-clr: #f5f5f5;
 }
-*{
+/* html *{
   margin: 0;
   padding: 0;
-}
+  box-sizing: border-box;
+} */
 html{
   font-family: Poppins, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.5rem;

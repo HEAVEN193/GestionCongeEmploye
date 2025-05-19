@@ -12,36 +12,42 @@ use Matteomcr\GestionCongeEmploye\Models\Employe;
 use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
 
 
-
-
-
-
-
 use Exception;
 use PDO;
 
 /**
- * Classe représentant un utilisateur de l'application.
- * 
- * Cette classe gère les informations relatives à un utilisateur, telles que son pseudo, son email,
- * et son mot de passe. Elle permet également de récupérer les statistiques de l'utilisateur,
- * vérifier si un email existe déjà, et gérer les connexions et créations de comptes.
+ * Classe représentant un congé demandé par un employé.
+ * Gère la création, validation, récupération et état d'une demande de congé.
  */
 class Conge
 {
     public $idConge;
-    public $idEmploye;
-    public $TypeConge;
-    public $DateDebut;
-    public $DateFin;
-    public $Justification;
-    public $Statut;
 
+    public $idEmploye;
+
+    public $TypeConge;
+
+    public $DateDebut;
+
+    public $DateFin;
+
+    public $Justification;
+
+    public $Statut;
+    
     protected $employe = null;
 
 
-    /**
+     /**
      * Crée une nouvelle demande de congé.
+     *
+     * @param int $idEmploye
+     * @param string $typeConge
+     * @param string $dateDebut
+     * @param string $dateFin
+     * @param string|null $justification
+     * @return int ID du congé nouvellement créé.
+     * @throws Exception
      */
     public static function create($idEmploye, $typeConge, $dateDebut, $dateFin, $justification = null)
     {
@@ -86,8 +92,6 @@ class Conge
             throw new Exception("Type de congé invalide.");
         }
 
-
-
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare("INSERT INTO CONGES (idEmploye, TypeConge, DateDebut, DateFin, Justification) VALUES (:idEmploye, :type, :debut, :fin, :justification)");
@@ -103,8 +107,9 @@ class Conge
         return $pdo->lastInsertId();
     }
 
-    /**
-     * Récupère tous les congés.
+ /**
+     * Récupère tous les congés enregistrés.
+     * @return Conge[]
      */
     public static function fetchAll(): array
     {
@@ -114,8 +119,10 @@ class Conge
         return $stmt->fetchAll();
     }
 
-     /**
-     * Récupère un congé par son ID.
+    /**
+     * Récupère un congé par son identifiant.
+     * @param int $id
+     * @return Conge|false
      */
     public static function fetchById(int $id): Conge|false
     {
@@ -126,7 +133,9 @@ class Conge
     }
 
     /**
-     * Récupère les congés d'un employé.
+     * Récupère les congés d'un employé donné.
+     * @param int $idEmploye
+     * @return Conge[]
      */
     public static function fetchByEmployeId($idEmploye): array
     {
@@ -136,6 +145,11 @@ class Conge
         return $stmt->fetchAll();
     }
 
+    /**
+     * Récupère tous les congés d'un département donné.
+     * @param int $idDepartement
+     * @return Conge[]
+     */
     public static function fetchByDepartementId(int $idDepartement): array
     {
         $stmt = Database::connection()->prepare("
@@ -149,14 +163,12 @@ class Conge
         return $stmt->fetchAll();
     }
 
-    public static function fetchByType($nomType): array
-    {
-        $stmt = Database::connection()->prepare("SELECT * FROM CONGES WHERE TypeConge = :nom");
-        $stmt->execute([':nom' => $nomType]);
-        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, static::class);
-        return $stmt->fetchAll();
-    }
 
+    /**
+     * Valide une demande de congé et déduit le solde correspondant.
+     * @return bool
+     * @throws Exception
+     */
     public function validate(): bool
     {
         try {
@@ -196,6 +208,11 @@ class Conge
         }
     }
 
+    /**
+     * Refuse une demande de congé.
+     * @return bool
+     * @throws Exception
+     */
     public function reject(): bool
     {
         try {
@@ -211,6 +228,10 @@ class Conge
         }
     }
 
+    /**
+     * Retourne l'objet Employe lié à ce congé.
+     * @return Employe|null
+     */
     public function getEmploye() : Employe|null
     {
         if(!$this->employe){
@@ -220,7 +241,10 @@ class Conge
     }
 
    
-
+    /**
+     * Détermine l'état actuel du congé (à venir, en cours, passé).
+     * @return string
+     */
     public function getEtat(): string
     {
         $today = new \DateTime();
@@ -236,12 +260,19 @@ class Conge
         }
     }
 
+    /**
+     * Calcule la durée du congé en jours.
+     * @return int
+     */
     public function getDuree(): int {
         $start = new \DateTime($this->DateDebut);
         $end = new \DateTime($this->DateFin);
         return $start->diff($end)->days + 1;
     }
+
     
+    /*--------------------------- INUTILISÉ --------------------------*/
+
     public function getJoursRestants(): int {
         $today = new \DateTime();
         $start = new \DateTime($this->DateDebut);

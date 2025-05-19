@@ -202,7 +202,7 @@ use Matteomcr\GestionCongeEmploye\Models\HeureSupplementaire;
 
 
         </div>
-        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
+        <?php if (Employe::current() && Employe::current()->getRole()->NomRole != "Administrateur"): ?>
         <a href="/form-heures-supp">
           <button class="btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -102,6 +102,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
         flex-wrap: wrap;
         gap: 1rem;
         align-items: center;
+        justify-content: end;
     }
 
     .search-box {
@@ -137,6 +138,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
+
     }
 
     .filter-select {
@@ -178,6 +180,31 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
         border-right: 4px solid transparent;
         border-top: 4px solid var(--color-gray-400);
         pointer-events: none;
+    }
+    .filter-date {
+        display: flex;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        align-items: center;
+    }
+
+    .filter-date label {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: #333;
+    }
+
+    .filter-date input[type="date"] {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+    }
+
+    .filter-date input[type="date"]:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
     }
 
     .btn-add {
@@ -318,7 +345,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
 
         </div>
 
-        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
+        <?php if (Employe::current() && Employe::current()->getRole()->NomRole != "Administrateur"): ?>
         <a href="/form-conge">
           <button class="btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -340,15 +367,15 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
                     <div class="filter-group">
                         
                     <!-- Filtre période -->
-                      <div class="filter-select">
-                          <label for="dateDebut">Du :</label>
-                          <input type="date" name="dateDebut" value="<?= htmlspecialchars($_GET['dateDebut'] ?? '') ?>" onchange="this.form.submit()">
-                      </div>
+                    <div class="filter-date">
+                      <label for="dateDebut">Du : </label>
+                      <input type="date" name="dateDebut" id="dateDebut" value="<?= htmlspecialchars($_GET['dateDebut'] ?? '') ?>" onchange="this.form.submit()">
+                  </div>
 
-                      <div class="filter-select">
-                          <label for="dateFin">Au :</label>
-                          <input type="date" name="dateFin" value="<?= htmlspecialchars($_GET['dateFin'] ?? '') ?>" onchange="this.form.submit()">
-                      </div>
+                  <div class="filter-date">
+                      <label for="dateFin">Au : </label>
+                      <input type="date" name="dateFin" id="dateFin" value="<?= htmlspecialchars($_GET['dateFin'] ?? '') ?>" onchange="this.form.submit()">
+                  </div>
                         
                         <div class="filter-select">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -362,6 +389,8 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
                                 </select>
                             </div>
                         </div>
+                        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
+
                         <div class="filter-select">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
@@ -380,6 +409,8 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
                             </div>
                             
                         </div>
+                      <?php endif; ?>
+
                       </form>
                       
                       
@@ -401,6 +432,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
               <th>Date fin</th>
               <th>Statut</th>
               <th>Etat</th>
+              <th>Justification</th>
               <?php if (Employe::current()->getRole()->NomRole === 'Manager'): ?>
               <th class="actions">Actions</th>
               <?php endif; ?>
@@ -418,7 +450,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
                 <?php if ($conges->Statut === 'Valide'): ?>
                     <span class="badge badge-success">Validée</span>
                 <?php elseif ($conges->Statut === 'Refuse'): ?>
-                    <span class="badge badge-alert">Refusée</span>
+                    <span class="badge badge-danger">Refusée</span>
                 <?php else: ?>
                     <span class="badge badge-warning">En attente</span>
                 <?php endif; ?>
@@ -435,22 +467,29 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
                     <span class="badge bg-dark">Passé</span>
                 <?php endif; ?>
               </td>
+              <td><?= htmlspecialchars($conges->Justification) ?></td>
               <?php if (Employe::current()->getRole()->NomRole === 'Manager'): ?>
               <td class="actions">
                 <?php if ($conges->Statut === 'En attente'): ?>
-                <a href="/validerConge/<?= $conges->idConge ?>">
-                  <button class="btn-icon btn-success" title="Approuver">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                  </button></a>
-                <a href="/refuserConge/<?= $conges->idConge ?>">
-                  <button class="btn-icon btn-danger" title="Refuser">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            
+                  <form action="/validerConge/<?= $conges->idConge ?>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn-icon btn-success" title="Approuver">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </button>
+                </form>
+             
+                  <form action="/refuserConge/<?= $conges->idConge ?>" method="POST" style="display:inline;">
+                  <button type="submit" class="btn-icon btn-danger" title="Refuser">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18"/>
                       <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                  </button></a>
+                      </svg>
+                  </button>
+                    </form>
                 <?php else: ?>
                 <span class="text-muted">Action non disponible</span>
                 <?php endif; ?>

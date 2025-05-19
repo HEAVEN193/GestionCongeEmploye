@@ -2,20 +2,27 @@
 
 namespace Matteomcr\GestionCongeEmploye\Models;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 use Matteomcr\GestionCongeEmploye\Models\Database;
-
 use PDO;
 
+/**
+ * Classe représentant un département au sein de l'entreprise.
+ * Gère la création, mise à jour, suppression et récupération des départements ainsi que leur manager associé.
+ */
 class Departement {
-    public $idDepartement;
-    public $NomDepartement;
-    public $idManager;
 
+    public $idDepartement;
+
+    public $NomDepartement;
+
+    public $idManager;
+    
     protected $manager = null;
 
+    /**
+     * Récupère tous les départements.
+     * @return Departement[]
+     */
     public static function fetchAll() {
         $statement = Database::connection()->prepare("SELECT * FROM DEPARTEMENT");
         $statement->execute();
@@ -23,6 +30,11 @@ class Departement {
         return $statement->fetchAll();
     }
 
+    /**
+     * Récupère un département par son ID.
+     * @param int $id
+     * @return Departement|false
+     */
     public static function fetchById(int $id): Departement|false
     {
         $statement = Database::connection()->prepare("SELECT * FROM DEPARTEMENT WHERE idDepartement = :id");
@@ -31,6 +43,10 @@ class Departement {
         return $statement->fetch();
     }
 
+    /**
+     * Récupère l'employé manager du département s'il existe.
+     * @return Employe|null
+     */
     public function getManager() : Employe|null
     {
         if(!$this->manager){
@@ -39,6 +55,11 @@ class Departement {
         return $this->manager;
     }
 
+    /**
+     * Supprime un département s'il n'est plus utilisé.
+     * @param int $idDepartement
+     * @throws \Exception
+     */
     public static function delete($idDepartement) {
         $pdo = Database::connection();
 
@@ -62,6 +83,14 @@ class Departement {
         $stmt->execute([':id' => $idDepartement]);
     }
 
+    /**
+     * Met à jour les informations d'un département.
+     * @param int $id
+     * @param string $nom
+     * @param int|null $idManager
+     * @return bool
+     * @throws \Exception
+     */
     public static function update($id, $nom, $idManager)
     {
         try {
@@ -84,6 +113,13 @@ class Departement {
         }
     }
 
+    /**
+     * Crée un nouveau département.
+     * @param string $nom
+     * @param int|null $idManager
+     * @return int ID du département créé
+     * @throws \Exception
+     */
     public static function create($nom, $idManager)
     {
         try {

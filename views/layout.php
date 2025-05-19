@@ -50,7 +50,7 @@
         </button>
         <ul class="sub-menu">
           <div>
-            <li><a href="/showEmploye">Voir tout</a></li>
+            <li><a href="/employes">Voir tout</a></li>
             <?php  if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
             <li><a href="/form-add-employe">Ajouter</a></li>
             <?php endif; ?>

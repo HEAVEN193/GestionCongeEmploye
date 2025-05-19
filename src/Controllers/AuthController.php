@@ -39,7 +39,8 @@ class AuthController extends BaseController{
              $user = Employe::login($email, $password);
              if ($user) {
                  $_SESSION['user'] = $user['Email'];
-                 return $this->view->render($response, 'home-page.php');
+                 header('Location: /');
+                exit;
              }
          } catch (Exception $e) {
              $_SESSION['error'] = $e->getMessage();

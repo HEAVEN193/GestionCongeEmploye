@@ -107,6 +107,7 @@ body {
     flex-wrap: wrap;
     gap: 1rem;
     align-items: center;
+    justify-content: flex-end;
 }
 
 .search-box {
@@ -142,6 +143,7 @@ body {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    
 }
 
 .filter-select {
@@ -369,15 +371,9 @@ tr:hover {
     <main class="main">
         <div class="container">
             <div class="filter-bar">
-                <div class="search-box">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="text" placeholder="Rechercher un employé...">
-                </div>
                 
-                <form method="GET" action="/showEmploye">
+                
+                <form method="GET" action="/employes">
                     <div class="filter-group">
                         
                         
@@ -421,15 +417,13 @@ tr:hover {
 
                     <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
 
-                    <a href="/form-add-employe">
-                        <button class="btn-add">
+                        <a href="/form-add-employe" class="btn-add d-inline-flex align-items-center gap-1">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                             Ajouter
-                        </button>
-                    </a>
+                        </a>
                     <?php endif; ?>
 
                 </div>
@@ -470,7 +464,7 @@ tr:hover {
                                         </svg>
                                     </button></a>
                                 <a href="/deleteEmploye/<?= $employe->idEmploye ?>">
-                                    <button class="btn-icon btn-delete" title="Supprimer">
+                                    <button class="btn-icon btn-delete" title="Supprimer" onclick="return confirm('Supprimer cette utilisateur ?')">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M3 6h18"></path>
                                             <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>

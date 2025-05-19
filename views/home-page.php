@@ -10,117 +10,208 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <title>Calendrier</title>
-    <style>
-      :root {
-      --color-primary: #3B82F6;
-      --color-primary-dark: #2563EB;
-      --color-success: #10B981;
-      --color-success-light: #D1FAE5;
-      --color-danger: #EF4444;
-      --color-danger-light: #FEE2E2;
-      --color-warning: #F59E0B;
-      --color-warning-light: #FEF3C7;
-      --color-gray-50: #F9FAFB;
-      --color-gray-100: #F3F4F6;
-      --color-gray-200: #E5E7EB;
-      --color-gray-300: #D1D5DB;
-      --color-gray-400: #9CA3AF;
-      --color-gray-500: #6B7280;
-      --color-gray-600: #4B5563;
-      --color-gray-700: #374151;
-      --color-gray-800: #1F2937;
-      --color-gray-900: #111827;
-    }
-        html * {
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+     <style>
+:root {
+    --color-primary: #3B82F6;
+    --color-success: #10B981;
+    --color-danger: #EF4444;
+    --color-warning: #F59E0B;
+    --color-gray-50: #F9FAFB;
+    --color-gray-100: #F3F4F6;
+    --color-gray-200: #E5E7EB;
+    --color-gray-700: #374151;
+}
 
-        body {
-            background-color: #f3f4f6;
-            padding: 20px;
-        }
+html * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
 
-        .calendar {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
+body {
+    background-color: var(--color-gray-100);
+}
+h1{
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding:30px;
+}
 
-        .calendar-header {
-            background: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e5e7eb;
-        }
+.header {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
 
-        .calendar-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #1f2937;
-        }
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
 
-        .calendar-nav {
-            display: flex;
-            gap: 10px;
-        }
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      /* padding: 0 1rem; */
-    }
-    .header {
-      background-color: white;
-      padding: 1.5rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
-    }
+.header-title svg {
+    color: var(--color-primary);
+}
+.cards-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
 
-    .header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
+.pending-card {
+    border-left-color: #3b82f6;
+}
 
-    .header-title svg {
-        color: var(--color-primary);
-    }
+.approved-card {
+    border-left-color: #10b981;
+}
 
-    .header-title h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-    }
+.total-card {
+    border-left-color: #8b5cf6;
+}
 
-    .calendar-filters {
+.overtime-card {
+    border-left-color: #f97316;
+}
+
+.card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-info h3 {
+    color: #6b7280;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.card-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.card-icon {
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pending-icon {
+    background-color: #eff6ff;
+    color: #3b82f6;
+}
+
+.approved-icon {
+    background-color: #ecfdf5;
+    color: #10b981;
+}
+
+.total-icon {
+    background-color: #f5f3ff;
+    color: #8b5cf6;
+}
+
+.overtime-icon {
+    background-color: #fff7ed;
+    color: #f97316;
+}
+
+.calendar {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.calendar-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-gray-200);
+}
+
+.calendar-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-gray-700);
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: 1px solid var(--color-gray-200);
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--color-gray-700);
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    background: var(--color-gray-50);
+}
+
+.btn.active {
+    background: var(--color-gray-100);
+    color: var(--color-primary);
+}
+
+/* Filter Panel Styles */
+.calendar-filters {
     position: relative;
+    display: flex;
 }
 
 .filters-panel {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 8px);
     right: 0;
-    margin-top: 8px;
     background: white;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-gray-200);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 16px;
@@ -128,21 +219,17 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
     min-width: 250px;
 }
 
-.filters-section {
-    margin-bottom: 16px;
-}
-
 .filters-section h4 {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #374151;
-    margin-bottom: 8px;
+    color: var(--color-gray-700);
+    margin-bottom: 12px;
 }
 
 .filter-options {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .filter-option {
@@ -150,7 +237,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
     align-items: center;
     gap: 8px;
     font-size: 0.875rem;
-    color: #4b5563;
+    color: var(--color-gray-700);
     cursor: pointer;
 }
 
@@ -158,78 +245,100 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
     width: 16px;
     height: 16px;
     border-radius: 4px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--color-gray-200);
     cursor: pointer;
+    accent-color: var(--color-primary);
 }
 
-/* Modification du style des boutons de vue */
-.view-buttons {
-    display: flex;
-    gap: 4px;
-    margin-right: 12px;
+
+.filter-select {
+    position: relative;
+
 }
 
-.view-button {
-    padding: 6px 12px;
-    border: 1px solid #e5e7eb;
-    background: white;
-    border-radius: 6px;
-    cursor: pointer;
+.filter-select svg {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-gray-400);
+    pointer-events: none;
+}
+
+.filter-select select {
+    padding: 0.5rem 2rem 0.5rem 2.5rem;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 0.375rem;
     font-size: 0.875rem;
-    color: #374151;
-    transition: all 0.2s;
+    background-color: white;
+    cursor: pointer;
+    appearance: none;
 }
 
-.view-button.active {
-    background: #eff6ff;
-    color: #2563eb;
-    border-color: #2563eb;
+.filter-select select:focus {
+    outline: none;
+    border-color: var(--color-blue-500);
+    box-shadow: 0 0 0 3px var(--color-blue-100);
 }
 
-        .btn {
-            padding: 8px 16px;
-            border: 1px solid #e5e7eb;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            color: #374151;
-            transition: all 0.2s;
-        }
+.filter-select::after {
+    content: '';
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid var(--color-gray-400);
+    pointer-events: none;
+}
 
-        .btn:hover {
-            background: #f9fafb;
-            border-color: #d1d5db;
-        }
+/* Calendar Content */
+.calendar-content {
+    padding: 20px;
+}
 
-        .btn-group {
-            display: flex;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            overflow: hidden;
-        }
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 10px;
+    text-align: center;
+}
 
-        .btn-group .btn {
-            border: none;
-            border-radius: 0;
-            border-right: 1px solid #e5e7eb;
-        }
+.weekdays span {
+    padding: 10px;
+    font-weight: 500;
+    color: var(--color-gray-700);
+}
 
-        .btn-group .btn:last-child {
-            border-right: none;
-        }
+/* Month View */
+.month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
 
-        .btn-group .btn.active {
-            background: #f3f4f6;
-            color: #2563eb;
-        }
+.day {
+    aspect-ratio: 1;
+    padding: 8px;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 6px;
+    background: white;
+}
 
-        .calendar-grid {
-            padding: 20px;
-        }
+.day.other-month {
+    background: var(--color-gray-50);
+    color: var(--color-gray-400);
+}
 
-        /* Vue semaine */
-.calendar-week {
+.day.today {
+    background: #EFF6FF;
+    border-color: var(--color-primary);
+}
+
+/* Week View */
+.week-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 4px;
@@ -237,7 +346,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
 }
 
 .week-day {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-gray-200);
     border-radius: 6px;
     background: white;
     display: flex;
@@ -245,10 +354,10 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
 }
 
 .week-day-header {
-    padding: 8px;
+    padding: 10px;
     text-align: center;
-    border-bottom: 1px solid #e5e7eb;
-    background: #f9fafb;
+    border-bottom: 1px solid var(--color-gray-200);
+    background: var(--color-gray-50);
 }
 
 .week-day-content {
@@ -257,672 +366,540 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
     padding: 8px;
 }
 
-/* Vue jour */
-.calendar-day {
+/* Day View */
+.day-grid {
     height: 600px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    background: white;
-}
-
-.day-header {
-    padding: 16px;
-    text-align: center;
-    border-bottom: 1px solid #e5e7eb;
-    background: #f9fafb;
-}
-
-.day-content {
-    height: calc(100% - 60px);
     overflow-y: auto;
-    padding: 16px;
+}
+
+.day-view {
+    display: flex;
+    flex-direction: column;
 }
 
 .hour-slot {
     display: flex;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #e5e7eb;
+    min-height: 60px;
+    border-bottom: 1px solid var(--color-gray-200);
 }
 
-.hour-label {
+.hour-time {
     width: 60px;
-    color: #6b7280;
+    padding: 8px;
+    color: var(--color-gray-700);
     font-size: 0.875rem;
 }
 
 .hour-events {
     flex: 1;
-    min-height: 40px;
+    padding: 4px;
 }
 
-        .weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-            margin-bottom: 10px;
-        }
+/* Events */
+.event {
+    margin: 2px 0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
 
-        .weekdays span {
-            text-align: center;
-            font-weight: 500;
-            color: #6b7280;
-            font-size: 0.875rem;
-            padding: 10px;
-        }
+.event.vacation { background: #DBEAFE; color: #1E40AF; }
+.event.conge { background: #DBEAFE; color: #1E40AF; }
+.event.conge.valide { background: #D1FAE5; color: #065F46; }
+.event.conge.refuse { display: none; }
 
-        .days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-        }
+.event.evaluation { background: #FCE7F3; color: #9D174D; }
+.event.reunion { background: #FEF3C7; color: #92400E; }
+.event.ferie { background: #FEE2E2; color: #991B1B; }
+.event.evenement { background: #F3E8FF; color: #6B21A8; }
+/* .event.holiday { background: #D1FAE5; color: #065F46; } */
 
-        .day {
-            aspect-ratio: 1;
-            padding: 8px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
+/* Legend */
+.legend {
+    padding: 20px;
+    border-top: 1px solid var(--color-gray-200);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
 
-        .day:hover {
-            background: #f9fafb;
-            border-color: #d1d5db;
-        }
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-        .day.today {
-            background: #eff6ff;
-            border-color: #3b82f6;
-            color: #2563eb;
-            font-weight: bold;
-        }
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
 
-        .day.other-month {
-            color: #9ca3af;
-            background: #f9fafb;
-        }
+@media (max-width: 768px) {
+    .calendar-header {
+        flex-direction: column;
+        gap: 10px;
+    }
 
-        .day-number {
-            font-size: 0.875rem;
-            margin-bottom: 4px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .events {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            margin-top: 4px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .event {
-            padding: 4px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .event::before {
-            content: '';
-            display: block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .event.vacation { 
-            background: rgba(219, 234, 254, 0.8);
-            color: #1e40af;
-        }
-        .event.vacation::before { background: #3b82f6; }
-
-        .event.sick { 
-            background: rgba(254, 226, 226, 0.8);
-            color: #991b1b;
-        }
-        .event.sick::before { background: #ef4444; }
-
-        .event.personal { 
-            background: rgba(243, 232, 255, 0.8);
-            color: #6b21a8;
-        }
-        .event.personal::before { background: #8b5cf6; }
-
-        .event.overtime { 
-            background: rgba(255, 247, 237, 0.8);
-            color: #9a3412;
-        }
-        .event.overtime::before { background: #f97316; }
-
-        .event.holiday { 
-            background: rgba(220, 252, 231, 0.8);
-            color: #166534;
-        }
-        .event.holiday::before { background: #10b981; }
-
-        .event.meeting { 
-            background: rgba(254, 243, 199, 0.8);
-            color: #92400e;
-        }
-        .event.meeting::before { background: #f59e0b; }
-
-        .event.evaluation { 
-            background: rgba(252, 231, 243, 0.8);
-            color: #9d174d;
-        }
-        .event.evaluation::before { background: #ec4899; }
-
-        .day-indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-        }
-
-        .day.has-holiday .day-indicator { background: #10b981; }
-        .day.has-vacation .day-indicator { background: #3b82f6; }
-        .day.has-meeting .day-indicator { background: #f59e0b; }
-        .day.has-evaluation .day-indicator { background: #ec4899; }
-
-        .event-count {
-            position: absolute;
-            bottom: 4px;
-            right: 4px;
-            background: #6b7280;
-            color: white;
-            font-size: 0.75rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            z-index: 2;
-        }
-
-        .legend {
-            padding: 20px;
-            border-top: 1px solid #e5e7eb;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.875rem;
-            color: #4b5563;
-        }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        @media (max-width: 768px) {
-            .calendar-header {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .calendar-nav {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .day {
-                font-size: 0.75rem;
-            }
-
-            .events {
-                display: none;
-            }
-
-            .event-count {
-                display: block;
-            }
-        }
-    </style>
+    .calendar-nav {
+        width: 100%;
+        justify-content: center;
+    }
+}
+     </style>
 </head>
 <body>
     <div class="container">
-      <header class="header">
-        <div class="header-content">
-          <div class="header-title">
-          <div class="card-icon stats-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#3B82F6"><path d="M520-640v-160q0-17 11.5-28.5T560-840h240q17 0 28.5 11.5T840-800v160q0 17-11.5 28.5T800-600H560q-17 0-28.5-11.5T520-640ZM120-480v-320q0-17 11.5-28.5T160-840h240q17 0 28.5 11.5T440-800v320q0 17-11.5 28.5T400-440H160q-17 0-28.5-11.5T120-480Zm400 320v-320q0-17 11.5-28.5T560-520h240q17 0 28.5 11.5T840-480v320q0 17-11.5 28.5T800-120H560q-17 0-28.5-11.5T520-160Zm-400 0v-160q0-17 11.5-28.5T160-360h240q17 0 28.5 11.5T440-320v160q0 17-11.5 28.5T400-120H160q-17 0-28.5-11.5T120-160Zm80-360h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg>
-           </div>
-            <h1>Tableau de bord</h1>
-          </div>
-        </div>
-      </header>
-        </div>
-      </div>
-    </header>
-    <div class="calendar">
-        <div class="calendar-header">
-            <h2 class="calendar-title">Janvier 2025</h2>
-            <div class="calendar-nav">
-                <div class="btn-group">
-                    <button class="btn active">Mois</button>
-                    <button class="btn">Semaine</button>
-                    <button class="btn">Jour</button>
+        <header class="header">
+            <div class="header-content">
+                <div class="header-title">
+                    <div class="card-icon stats-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#3B82F6"><path d="M520-640v-160q0-17 11.5-28.5T560-840h240q17 0 28.5 11.5T840-800v160q0 17-11.5 28.5T800-600H560q-17 0-28.5-11.5T520-640ZM120-480v-320q0-17 11.5-28.5T160-840h240q17 0 28.5 11.5T440-800v320q0 17-11.5 28.5T400-440H160q-17 0-28.5-11.5T120-480Zm400 320v-320q0-17 11.5-28.5T560-520h240q17 0 28.5 11.5T840-480v320q0 17-11.5 28.5T800-120H560q-17 0-28.5-11.5T520-160Zm-400 0v-160q0-17 11.5-28.5T160-360h240q17 0 28.5 11.5T440-320v160q0 17-11.5 28.5T400-120H160q-17 0-28.5-11.5T120-160Zm80-360h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg>
+                    </div>
+                    <h1>Tableau de bord</h1>
                 </div>
-                <button class="btn" id="prevMonth">&lt;</button>
-                <button class="btn">Aujourd'hui</button>
-                <button class="btn" id="nextMonth">&gt;</button>
             </div>
-                    <div class="calendar-filters">
-            <button class="btn" id="filterButton">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                </svg>
-                Filtres
-            </button>
-            <div class="filters-panel" id="filtersPanel" style="display: none;">
-                <div class="filters-section">
-                    <h4>Types d'événements</h4>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="checkbox" value="vacation" checked> Congés
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" value="sick" checked> Maladie
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" value="personal" checked> Personnel
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" value="holiday" checked> Jours fériés
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" value="meeting" checked> Réunions
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" value="evaluation" checked> Évaluations
-                        </label>
+        </header>
+        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
+        <!-- Carte des congés en attente -->
+         <div class="cards-container">
+            <div class="card pending-card">
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3>Solde congés vacances</h3>
+                        <p class="card-value">
+                        <?php
+                                    $resultat = Employe::current()->SoldeConge;
+                                    echo $resultat . " jours";    
+                                ?>
+                        </p>
+                    </div>
+                    <div class="card-icon pending-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carte des congés approuvés -->
+            <div class="card approved-card">
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3>Solde congés heures supp.</h3>
+                        <p class="card-value">
+                        <?php
+                            $resultat = floor(Employe::current()->SoldeCongeHeureSupp);
+                            echo $resultat . " jours";    
+                        ?>
+                        </p>
+                    </div>
+                    <div class="card-icon approved-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+                <div class="card overtime-card">
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3>Heures supplémentaires</h3>
+                        <p class="card-value">
+                        <?php
+                            $resultat = Employe::current()->getTotalOvertime();
+                            $heures = isset($resultat['heures']) ? $resultat['heures'] : 0;
+                            echo $heures . " heures";    
+                        ?>
+                        </p>
+                    </div>
+                    <div class="card-icon overtime-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
+        <?php endif; ?>
 
-        <div class="calendar-grid">
-            <div class="weekdays">
-                <span>Dim</span>
+
+
+        <div class="calendar">
+            <div class="calendar-header">
+                <h2 class="calendar-title">Janvier 2025</h2>
+                <div class="calendar-nav">
+                    <div class="btn-group">
+                        <button class="btn active" data-view="month">Mois</button>
+                        <button class="btn" data-view="week">Semaine</button>
+                        <button class="btn" data-view="day">Jour</button>
+                    </div>
+                    <button class="btn" id="prevBtn">&lt;</button>
+                    <button class="btn" id="todayBtn">Aujourd'hui</button>
+                    <button class="btn" id="nextBtn">&gt;</button>
+                </div>
+                <div class="calendar-filters">
+                    <button class="btn" id="filterButton">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        Types
+                    </button>
+                    <div class="filters-panel" id="filtersPanel" style="display: none;">
+                        <div class="filters-section">
+                            <h4>Types d'événements</h4>
+                            <div class="filter-options">
+                                <label class="filter-option">
+                                    <input type="checkbox" value="conge" checked> Congés
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="reunion" checked> Réunions
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="evaluation" checked> Évaluations
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="ferie" checked> Jours fériés
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="evenement" checked> Événements
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Administrateur"): ?>
+                        <form method="GET" action="/" class="filter-select">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+
+                            <select name="departement" onchange="this.form.submit()">
+                                <option value="">Tous les départements</option>
+                                <?php foreach (Departement::fetchAll() as $dep): ?>
+                                    <option value="<?= $dep->idDepartement ?>" 
+                                        <?= isset($departementFiltre) && $departementFiltre == $dep->idDepartement ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($dep->NomDepartement) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </form>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div id="calendarContent" class="calendar-content">
+                <div class="weekdays">
                 <span>Lun</span>
-                <span>Mar</span>
-                <span>Mer</span>
-                <span>Jeu</span>
-                <span>Ven</span>
-                <span>Sam</span>
+                    <span>Mar</span>
+                    <span>Mer</span>
+                    <span>Jeu</span>
+                    <span>Ven</span>
+                    <span>Sam</span>
+                    <span>Dim</span>
+                </div>
+                <div id="calendarGrid"></div>
             </div>
-            <div class="days" id="daysGrid"></div>
-        </div>
 
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color" style="background: #3b82f6;"></div>
-                <span>Congés</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #ef4444;"></div>
-                <span>Arrêt maladie</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #8b5cf6;"></div>
-                <span>Personnel</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #10b981;"></div>
-                <span>Jours fériés</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #f59e0b;"></div>
-                <span>Réunions</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #ec4899;"></div>
-                <span>Évaluations</span>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #3b82f6;"></div>
+                    <span>Congés en attente</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #10b981;"></div>
+                    <span>Congé approuvé</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f59e0b;"></div>
+                    <span>Réunions</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ec4899;"></div>
+                    <span>Évaluations</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ef4444;"></div>
+                    <span>Jour fériés</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #8b5cf6;"></div>
+                    <span>Evénement</span>
+                </div>
             </div>
         </div>
     </div>
-  </div>
-
 
     <script>
-        class Calendar {
-            constructor() {
-                this.currentDate = new Date();
-                this.currentView = 'month'; // 'month', 'week', 'day'
-                this.activeFilters = new Set(['vacation', 'sick', 'personal', 'holiday', 'meeting', 'evaluation']);
-                this.events = [
-                    { date: '2025-01-15', type: 'vacation', title: 'Congés annuels' },
-                    { date: '2025-01-10', type: 'sick', title: 'Arrêt maladie' },
-                    { date: '2025-01-01', type: 'holiday', title: 'Jour de l\'an' },
-                    { date: '2025-01-20', type: 'personal', title: 'RDV personnel' },
-                    { date: '2025-01-05', type: 'meeting', title: 'Réunion d\'équipe' },
-                    { date: '2025-01-12', type: 'evaluation', title: 'Évaluation annuelle' },
-                    { date: '2025-01-25', type: 'vacation', title: 'Congés' },
-                    { date: '2025-01-25', type: 'meeting', title: 'Point projet' },
-                    { date: '2025-01-15', type: 'meeting', title: 'Réunion client' }
-                ];
+    class Calendar {
+    constructor() {
+        this.currentDate = new Date();
+        this.currentView = 'month';
+        this.activeFilters = new Set(['conge', 'reunion', 'evaluation', 'ferie', 'evenement']);
+     
+        this.events = <?= json_encode($eventsFromPHP) ?>;
+        this.events = this.events.concat([
+            { date: '2025-05-06', type: 'reunion', title: 'Réunion' },
+            { date: '2025-05-08', type: 'evaluation', title: 'Evaluation mensuelle' },
+            { date: '2025-05-22', type: 'ferie', title: 'Fête du travail' },
+            { date: '2025-05-12', type: 'evenement', title: 'Evénement' },
+        ]);
 
-                this.initializeCalendar();
-                this.setupEventListeners();
+        console.log(this.events);
+        this.setupEventListeners();
+        this.render();
+    }
+
+    setupEventListeners() {
+        // Navigation buttons
+        document.getElementById('prevBtn').addEventListener('click', () => this.navigate('prev'));
+        document.getElementById('nextBtn').addEventListener('click', () => this.navigate('next'));
+        document.getElementById('todayBtn').addEventListener('click', () => {
+            this.currentDate = new Date();
+            this.render();
+        });
+
+        // View buttons
+        document.querySelectorAll('[data-view]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                document.querySelectorAll('[data-view]').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                this.currentView = e.target.dataset.view;
+                this.render();
+            });
+        });
+
+        // Filter button
+        const filterButton = document.getElementById('filterButton');
+        const filtersPanel = document.getElementById('filtersPanel');
+        
+        filterButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            filtersPanel.style.display = filtersPanel.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!filterButton.contains(e.target) && !filtersPanel.contains(e.target)) {
+                filtersPanel.style.display = 'none';
             }
+        });
 
-            initializeCalendar() {
-                this.renderCalendar();
-            }
+        // Filter checkboxes
+        document.querySelectorAll('.filter-option input').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    this.activeFilters.add(checkbox.value);
+                } else {
+                    this.activeFilters.delete(checkbox.value);
+                }
+                this.render();
+            });
+        });
+    }
 
-            setupEventListeners() {
-                document.getElementById('prevMonth').addEventListener('click', () => {
-                    this.currentDate.setMonth(this.currentDate.getMonth() - 1);
-                    this.renderCalendar();
-                });
+    navigate(direction) {
+        switch(this.currentView) {
+            case 'month':
+                this.currentDate.setMonth(this.currentDate.getMonth() + (direction === 'prev' ? -1 : 1));
+                break;
+            case 'week':
+                this.currentDate.setDate(this.currentDate.getDate() + (direction === 'prev' ? -7 : 7));
+                break;
+            case 'day':
+                this.currentDate.setDate(this.currentDate.getDate() + (direction === 'prev' ? -1 : 1));
+                break;
+        }
+        this.render();
+    }
 
-                document.getElementById('nextMonth').addEventListener('click', () => {
-                    this.currentDate.setMonth(this.currentDate.getMonth() + 1);
-                    this.renderCalendar();
-                });
-                // Gestion du bouton de filtres
-                const filterButton = document.getElementById('filterButton');
-                const filtersPanel = document.getElementById('filtersPanel');
-                
-                filterButton.addEventListener('click', () => {
-                    filtersPanel.style.display = filtersPanel.style.display === 'none' ? 'block' : 'none';
-                });
+    getEventsForDate(date) {
+        // Format the date to YYYY-MM-DD, handling timezone offset
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const dateString = `${year}-${month}-${day}`;
+        
+        return this.events.filter(event => 
+            event.date === dateString && 
+            this.activeFilters.has(event.type)
+        );
+    }
 
-                // Fermer le panel si on clique en dehors
-                document.addEventListener('click', (e) => {
-                    if (!filterButton.contains(e.target) && !filtersPanel.contains(e.target)) {
-                        filtersPanel.style.display = 'none';
-                    }
-                });
+    render() {
+        const container = document.getElementById('calendarContent');
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
 
-                // Gestion des checkboxes de filtres
-                const filterCheckboxes = document.querySelectorAll('.filter-option input');
-                filterCheckboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', () => {
-                        if (checkbox.checked) {
-                            this.activeFilters.add(checkbox.value);
-                        } else {
-                            this.activeFilters.delete(checkbox.value);
-                        }
-                        this.renderCalendar();
-                    });
-                });
-
-                // Gestion des boutons de vue
-                const viewButtons = document.querySelectorAll('.btn-group .btn');
-                viewButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        viewButtons.forEach(btn => btn.classList.remove('active'));
-                        button.classList.add('active');
-                        this.currentView = button.textContent.toLowerCase();
-                        this.renderCalendar();
-                    });
-                });
-
-                      // Gestion des boutons de vue
-              document.querySelectorAll('.btn-group .btn').forEach(button => {
-                  button.addEventListener('click', (e) => {
-                      document.querySelectorAll('.btn-group .btn').forEach(btn => {
-                          btn.classList.remove('active');
-                      });
-                      e.target.classList.add('active');
-                      this.currentView = e.target.textContent.toLowerCase();
-                      this.renderCalendar();
-                  });
-              });
-
-              // Bouton Aujourd'hui
-              document.querySelector('.btn:nth-child(2)').addEventListener('click', () => {
-                  this.currentDate = new Date();
-                  this.renderCalendar();
-              });
-            }
-
-            renderCalendar() {
-        const container = document.querySelector('.calendar-grid');
-        container.innerHTML = '';
+        // Update title
+        const titleFormat = {
+            month: { month: 'long', year: 'numeric' },
+            week: { day: 'numeric', month: 'long', year: 'numeric' },
+            day: { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
+        };
+        
+        document.querySelector('.calendar-title').textContent = 
+            this.currentDate.toLocaleDateString('fr-FR', titleFormat[this.currentView]);
 
         switch(this.currentView) {
-            case 'mois':
-                container.appendChild(this.renderMonth());
+            case 'month':
+                this.renderMonth(grid);
                 break;
-            case 'semaine':
-                container.appendChild(this.renderWeek());
+            case 'week':
+                this.renderWeek(grid);
                 break;
-            case 'jour':
-                container.appendChild(this.renderDay());
+            case 'day':
+                this.renderDay(grid);
                 break;
         }
     }
 
-    renderWeek() {
-        const weekContainer = document.createElement('div');
-        weekContainer.className = 'calendar-week';
+    renderMonth(container) {
+        container.className = 'month-grid';
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+        
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        
+        // Get the day of the week for the first day (0 = Sunday)
+        let firstDayIndex = firstDay.getDay();
+        // Convert to Monday-based index (0 = Monday)
+        firstDayIndex = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+        
+        const days = [];
+        const totalDays = firstDayIndex + lastDay.getDate();
+        const totalWeeks = Math.ceil(totalDays / 7);
+        
+        for (let i = 0; i < totalWeeks * 7; i++) {
+            const date = new Date(year, month, i - firstDayIndex + 1);
+            const isOtherMonth = date.getMonth() !== month;
+            
+            const dayEl = document.createElement('div');
+            dayEl.className = `day${isOtherMonth ? ' other-month' : ''}`;
+            
+            if (date.toDateString() === new Date().toDateString()) {
+                dayEl.classList.add('today');
+            }
+            
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'day-number';
+            dayNumber.textContent = date.getDate();
+            dayEl.appendChild(dayNumber);
+            
+            const events = this.getEventsForDate(date);
+            if (events.length > 0) {
+                const eventsContainer = document.createElement('div');
+                eventsContainer.className = 'events';
+                
+                events.forEach(event => {
+                    const eventEl = document.createElement('div');
+                    eventEl.className = `event ${event.type}`;
+                    console.log(event.statut)
+                    if(event.statut == "Valide"){
+                        eventEl.className += ` valide`;
+                    }
+                    if(event.statut == "En attente"){
+                        eventEl.className += ` attente`;
+                    }
+                    if(event.statut == "Refuse"){
+                        eventEl.className += ` refuse`;
+                    }
+                    eventEl.textContent = event.title;
+                    eventsContainer.appendChild(eventEl);
+                });
+                
+                dayEl.appendChild(eventsContainer);
+            }
+            
+            container.appendChild(dayEl);
+        }
+    }
 
+    renderWeek(container) {
+        container.className = 'week-grid';
         const weekStart = new Date(this.currentDate);
-        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+        // Adjust to start from Monday
+        const currentDay = weekStart.getDay();
+        const diff = currentDay === 0 ? -6 : 1 - currentDay;
+        weekStart.setDate(weekStart.getDate() + diff);
 
-        for(let i = 0; i < 7; i++) {
-            const currentDate = new Date(weekStart);
-            currentDate.setDate(weekStart.getDate() + i);
-
-            const dayElement = document.createElement('div');
-            dayElement.className = 'week-day';
-
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(weekStart);
+            date.setDate(weekStart.getDate() + i);
+            
+            const dayEl = document.createElement('div');
+            dayEl.className = 'week-day';
+            
             const header = document.createElement('div');
             header.className = 'week-day-header';
-            header.textContent = currentDate.toLocaleDateString('fr-FR', {
+            header.textContent = date.toLocaleDateString('fr-FR', {
                 weekday: 'short',
                 day: 'numeric'
             });
-
+            dayEl.appendChild(header);
+            
             const content = document.createElement('div');
             content.className = 'week-day-content';
-
-            const events = this.getEventsForDate(currentDate);
+            
+            const events = this.getEventsForDate(date);
             events.forEach(event => {
-                const eventElement = document.createElement('div');
-                eventElement.className = `event ${event.type}`;
-                eventElement.textContent = event.title;
-                content.appendChild(eventElement);
+                const eventEl = document.createElement('div');
+                eventEl.className = `event ${event.type}`;
+                eventEl.textContent = event.title;
+                content.appendChild(eventEl);
             });
-
-            dayElement.appendChild(header);
-            dayElement.appendChild(content);
-            weekContainer.appendChild(dayElement);
+            
+            dayEl.appendChild(content);
+            container.appendChild(dayEl);
         }
-
-        return weekContainer;
     }
 
-    renderDay() {
-        const dayContainer = document.createElement('div');
-        dayContainer.className = 'calendar-day';
-
-        const header = document.createElement('div');
-        header.className = 'day-header';
-        header.textContent = this.currentDate.toLocaleDateString('fr-FR', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long'
-        });
-
-        const content = document.createElement('div');
-        content.className = 'day-content';
-
-        for(let hour = 0; hour < 24; hour++) {
-            const hourSlot = document.createElement('div');
-            hourSlot.className = 'hour-slot';
-
-            const hourLabel = document.createElement('div');
-            hourLabel.className = 'hour-label';
-            hourLabel.textContent = `${hour}:00`;
-
-            const hourEvents = document.createElement('div');
-            hourEvents.className = 'hour-events';
-
-            const events = this.getEventsForDate(this.currentDate);
-            events.forEach(event => {
-                const eventElement = document.createElement('div');
-                eventElement.className = `event ${event.type}`;
-                eventElement.textContent = event.title;
-                hourEvents.appendChild(eventElement);
+    renderDay(container) {
+        container.className = 'day-grid';
+        
+        const dayEl = document.createElement('div');
+        dayEl.className = 'day-view';
+        
+        const events = this.getEventsForDate(this.currentDate);
+        
+        for (let hour = 0; hour < 24; hour++) {
+            const hourEl = document.createElement('div');
+            hourEl.className = 'hour-slot';
+            
+            const timeEl = document.createElement('div');
+            timeEl.className = 'hour-time';
+            timeEl.textContent = `${hour.toString().padStart(2, '0')}:00`;
+            hourEl.appendChild(timeEl);
+            
+            const eventsEl = document.createElement('div');
+            eventsEl.className = 'hour-events';
+            
+            const hourEvents = events.filter(event => {
+                const eventDate = new Date(event.date);
+                return eventDate.getHours() === hour;
             });
-
-            hourSlot.appendChild(hourLabel);
-            hourSlot.appendChild(hourEvents);
-            content.appendChild(hourSlot);
+            
+            hourEvents.forEach(event => {
+                const eventEl = document.createElement('div');
+                eventEl.className = `event ${event.type}`;
+                eventEl.textContent = event.title;
+                eventsEl.appendChild(eventEl);
+            });
+            
+            hourEl.appendChild(eventsEl);
+            dayEl.appendChild(hourEl);
         }
-
-        dayContainer.appendChild(header);
-        dayContainer.appendChild(content);
-
-        return dayContainer;
+        
+        container.appendChild(dayEl);
     }
+}
 
-            getMonthData() {
-                const year = this.currentDate.getFullYear();
-                const month = this.currentDate.getMonth();
-                
-                const firstDay = new Date(year, month, 1);
-                const lastDay = new Date(year, month + 1, 0);
-                
-                const firstDayIndex = firstDay.getDay();
-                const lastDayIndex = lastDay.getDay();
-                
-                const prevLastDay = new Date(year, month, 0);
-                
-                const days = [];
-                
-                // Previous month's days
-                for (let x = firstDayIndex; x > 0; x--) {
-                    days.push({
-                        date: new Date(year, month - 1, prevLastDay.getDate() - x + 1),
-                        isOtherMonth: true
-                    });
-                }
-                
-                // Current month's days
-                for (let i = 1; i <= lastDay.getDate(); i++) {
-                    days.push({
-                        date: new Date(year, month, i),
-                        isOtherMonth: false
-                    });
-                }
-                
-                // Next month's days
-                for (let j = 1; j <= 6 - lastDayIndex; j++) {
-                    days.push({
-                        date: new Date(year, month + 1, j),
-                        isOtherMonth: true
-                    });
-                }
-                
-                return days;
-            }
-
-            getEventsForDate(date) {
-                const dateString = date.toISOString().split('T')[0];
-                return this.events.filter(event => 
-                    event.date === dateString && 
-                    this.activeFilters.has(event.type)
-                );
-            }
-
-            renderCalendar() {
-                const daysGrid = document.getElementById('daysGrid');
-                const monthTitle = document.querySelector('.calendar-title');
-                
-                // Update month title
-                monthTitle.textContent = this.currentDate.toLocaleDateString('fr-FR', {
-                    month: 'long',
-                    year: 'numeric'
-                });
-                
-                // Clear previous days
-                daysGrid.innerHTML = '';
-                
-                // Get all days to display
-                const days = this.getMonthData();
-                
-                // Render each day
-                days.forEach(({ date, isOtherMonth }) => {
-                    const dayElement = document.createElement('div');
-                    dayElement.className = `day${isOtherMonth ? ' other-month' : ''}`;
-                    
-                    // Check if it's today
-                    const today = new Date();
-                    if (date.toDateString() === today.toDateString()) {
-                        dayElement.classList.add('today');
-                    }
-                    
-                    // Add day indicator
-                    const indicator = document.createElement('div');
-                    indicator.className = 'day-indicator';
-                    dayElement.appendChild(indicator);
-                    
-                    // Add day number
-                    const dayNumber = document.createElement('div');
-                    dayNumber.className = 'day-number';
-                    dayNumber.textContent = date.getDate();
-                    dayElement.appendChild(dayNumber);
-                    
-                    // Add events
-                    const events = this.getEventsForDate(date);
-                    if (events.length > 0) {
-                        // Add event type classes to day
-                        events.forEach(event => {
-                            dayElement.classList.add(`has-${event.type}`);
-                        });
-
-                        const eventsContainer = document.createElement('div');
-                        eventsContainer.className = 'events';
-                        
-                        events.slice(0, 2).forEach(event => {
-                            const eventElement = document.createElement('div');
-                            eventElement.className = `event ${event.type}`;
-                            eventElement.textContent = event.title;
-                            eventsContainer.appendChild(eventElement);
-                        });
-                        
-                        if (events.length > 2) {
-                            const eventCount = document.createElement('div');
-                            eventCount.className = 'event-count';
-                            eventCount.textContent = `+${events.length - 2}`;
-                            dayElement.appendChild(eventCount);
-                        }
-                        
-                        dayElement.appendChild(eventsContainer);
-                    }
-                    
-                    daysGrid.appendChild(dayElement);
-                });
-            }
-        }
-
-        // Initialize calendar when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            new Calendar();
-        });
+document.addEventListener('DOMContentLoaded', () => new Calendar());
     </script>
 </body>
 </html>
