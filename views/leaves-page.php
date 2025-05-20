@@ -436,20 +436,23 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
               <?php if (Employe::current()->getRole()->NomRole === 'Manager'): ?>
               <th class="actions">Actions</th>
               <?php endif; ?>
+              <?php if (Employe::current()->getRole()->NomRole === 'Employe'): ?>
+              <th class="commentaire">Commentaire</th>
+              <?php endif; ?>
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($conges as $conges): ?>
+            <?php foreach ($conges as $conge): ?>
             <tr>
-              <td class="pseudo"><?= htmlspecialchars($conges->getEmploye()->Pseudo) ?></td>
-              <td><?= htmlspecialchars($conges->TypeConge) ?></td>
-              <td><?= htmlspecialchars($conges->getDuree()). " jours" ?></td>
-              <td><?= htmlspecialchars($conges->DateDebut)?></td>
-              <td><?= htmlspecialchars($conges->DateFin)?></td>
+              <td class="pseudo"><?= htmlspecialchars($conge->getEmploye()->Pseudo) ?></td>
+              <td><?= htmlspecialchars($conge->TypeConge) ?></td>
+              <td><?= htmlspecialchars($conge->getDuree()). " jours" ?></td>
+              <td><?= htmlspecialchars($conge->DateDebut)?></td>
+              <td><?= htmlspecialchars($conge->DateFin)?></td>
               <td>
-                <?php if ($conges->Statut === 'Valide'): ?>
+                <?php if ($conge->Statut === 'Valide'): ?>
                     <span class="badge badge-success">Validée</span>
-                <?php elseif ($conges->Statut === 'Refuse'): ?>
+                <?php elseif ($conge->Statut === 'Refuse'): ?>
                     <span class="badge badge-danger">Refusée</span>
                 <?php else: ?>
                     <span class="badge badge-warning">En attente</span>
@@ -457,7 +460,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
                 </td>
 
               <td>
-                <?php $etat = $conges->getEtat(); ?>
+                <?php $etat = $conge->getEtat(); ?>
 
                 <?php if ($etat === 'a venir'): ?>
                     <span class="badge bg-secondary">À venir</span>
@@ -467,34 +470,56 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
                     <span class="badge bg-dark">Passé</span>
                 <?php endif; ?>
               </td>
-              <td><?= htmlspecialchars($conges->Justification) ?></td>
+              <td><?= htmlspecialchars($conge->Justification) ?></td>
               <?php if (Employe::current()->getRole()->NomRole === 'Manager'): ?>
               <td class="actions">
-                <?php if ($conges->Statut === 'En attente'): ?>
+                <?php if ($conge->Statut === 'En attente'): ?>
             
-                  <form action="/validerConge/<?= $conges->idConge ?>" method="POST" style="display:inline;">
-                    <button type="submit" class="btn-icon btn-success" title="Approuver">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                    </button>
-                </form>
-             
-                  <form action="/refuserConge/<?= $conges->idConge ?>" method="POST" style="display:inline;">
-                  <button type="submit" class="btn-icon btn-danger" title="Refuser">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"/>
-                      <line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
-                  </button>
-                    </form>
+                  <form action="/handle-leave-request/<?= $conge->idConge ?>" method="POST" style="display:inline;">
+                      <textarea name="commentaire" placeholder="Commentaire..." class="form-control mb-1" rows="1" required></textarea>
+
+                      <!-- Champ caché pour connaître l'action choisie -->
+                      <input type="hidden" name="action" value="" id="action-<?= $conge->idConge ?>">
+
+                      <!-- Bouton Valider -->
+                      <button type="submit" class="btn-icon btn-success"
+                          onclick="document.getElementById('action-<?= $conge->idConge ?>').value='valider'">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="20 6 9 17 4 12"/>
+                              </svg>
+                      </button>
+
+                      <!-- Bouton Refuser -->
+                      <button type="submit" class="btn-icon btn-danger"
+                          onclick="document.getElementById('action-<?= $conge->idConge ?>').value='refuser'">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                      </button>
+                  </form>
+
                 <?php else: ?>
                 <span class="text-muted">Action non disponible</span>
                 <?php endif; ?>
               </td>
+              
               <?php endif; ?>
+              
+              <?php if (Employe::current()->getRole()->NomRole === 'Employe'): ?>
+              <td>
+              <?php $commentaire = $conge->CommentaireManager ?? $conge->CommentaireValidation ?? null; ?>
+
+              <?php if (!empty($commentaire)): ?>
+                  <?= htmlspecialchars($commentaire) ?>
+              <?php else: ?>
+                  <span class="text-muted">Aucun commentaire</span>
+              <?php endif; ?>
+              </td>
+              <?php endif; ?>
+
             </tr>
             <?php endforeach; ?>
           </tbody>

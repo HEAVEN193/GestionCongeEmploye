@@ -12,6 +12,20 @@ use Exception;
 class AuthController extends BaseController{
 
     /**
+     * Affiche la page de connexion (sans layout).
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
+    public function showLoginPage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    {
+        $html = $this->view->fetch('login-page.php');
+        $response->getBody()->write($html);
+        return $response;
+    }
+    
+    /**
      * Connecte un Employe.
      * 
      * @param ServerRequestInterface $request La requête HTTP.

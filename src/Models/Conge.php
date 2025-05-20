@@ -34,6 +34,8 @@ class Conge
     public $Justification;
 
     public $Statut;
+
+    public $CommentaireManager;
     
     protected $employe = null;
 
@@ -169,14 +171,14 @@ class Conge
      * @return bool
      * @throws Exception
      */
-    public function validate(): bool
+    public function validate(string $commentaire = null): bool
     {
         try {
             $pdo = Database::connection();
 
             // 1. Mettre à jour le statut du congé
-            $stmt = $pdo->prepare("UPDATE CONGES SET Statut = 'Valide' WHERE idConge = :id");
-            $stmt->execute([':id' => $this->idConge]);
+            $stmt = $pdo->prepare("UPDATE CONGES SET Statut = 'Valide', CommentaireManager = :commentaire WHERE idConge = :id");
+            $stmt->execute([':id' => $this->idConge, ':commentaire' => $commentaire]);
 
             // 2. Déduire le bon solde selon le type
             $champ = null;
@@ -213,14 +215,13 @@ class Conge
      * @return bool
      * @throws Exception
      */
-    public function reject(): bool
+    public function reject(string $commentaire = null): bool
     {
         try {
             $pdo = Database::connection();
 
-            $stmt = $pdo->prepare("UPDATE CONGES SET Statut = 'Refuse' WHERE idConge = :id");
-            $stmt->bindParam(':id', $this->idConge, PDO::PARAM_INT);
-            $stmt->execute();
+            $stmt = $pdo->prepare("UPDATE CONGES SET Statut = 'Refuse', CommentaireManager = :commentaire WHERE idConge = :id");
+            $stmt->execute([':id' => $this->idConge, ':commentaire' => $commentaire]);
 
             return true;
         } catch (\Exception $e) {
