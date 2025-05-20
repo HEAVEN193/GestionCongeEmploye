@@ -15,7 +15,9 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
 
 class GestionController extends BaseController {
 
-
+    /*------------------------------------------------*/
+    /*---------------- GESTION EMPLOYES ---------------*/
+    /*------------------------------------------------*/
     public function addEmploye(ServerRequestInterface $request, ResponseInterface $response, array $args) {
         // Récupération et nettoyage des champs
         $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -129,6 +131,9 @@ class GestionController extends BaseController {
         }
     }
 
+    /*------------------------------------------------*/
+    /*-------------- GESTION DEPARTMENTS -------------*/
+    /*------------------------------------------------*/
     public function addDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) {
         $user = Employe::current();
 
@@ -143,7 +148,7 @@ class GestionController extends BaseController {
         $idManager = ($_POST['manager'] === "0" || $_POST['manager'] === 0 || $_POST['manager'] == "null") ? null : $_POST['manager'];
 
         $departementToCreate = Departement::create($nom, $idManager);
-        header('Location: /showDepartement');
+        header('Location: /departments');
         exit;
     }
 
@@ -163,11 +168,11 @@ class GestionController extends BaseController {
 
         Departement::update($idDepartement, $nom, $idManager);
 
-        header('Location: /showDepartement');
+        header('Location: /departments');
         exit;
     }
 
-    public function deleteDepartement(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+    public function deleteDepartment(ServerRequestInterface $request, ResponseInterface $response, array $args) {
         $user = Employe::current();
 
         if (!$user) {
@@ -186,11 +191,14 @@ class GestionController extends BaseController {
         } catch (\Exception $e) {
             $_SESSION['error'] = $e->getMessage();
         }
-        header('Location: /showDepartement');
+        header('Location: /departments');
         exit;
     }
 
-    public function reportHeureSupp(ServerRequestInterface $request, ResponseInterface $response, array $args) {
+    /*------------------------------------------------*/
+    /*-------------- GESTION HEURE SUPP. -------------*/
+    /*------------------------------------------------*/
+    public function reportOvertime(ServerRequestInterface $request, ResponseInterface $response, array $args) {
         $date = $_POST['date'] ?? null;
         $heures = isset($_POST['heures']) ? (int)$_POST['heures'] : 0;
         $idEmploye = Employe::current()->idEmploye;
@@ -201,23 +209,23 @@ class GestionController extends BaseController {
 
         if ($inputDate > $today) {
             $_SESSION['error'] = "La date ne peut pas être dans le futur.";
-            return $this->view->render($response, 'form-heure-supp.php');
+            return $this->view->render($response, 'form-overtime.php');
         }
 
         // Vérifications
         if (empty($date) || empty($conversionType)) {
             $_SESSION['error'] = "Veuillez entrer une date, un nombre d'heures valide (> 0) et un type de conversion.";
-            return $this->view->render($response, 'form-heure-supp.php');
+            return $this->view->render($response, 'form-overtime.php');
         }
 
         $ratioConversion = $heures / 8;
 
     try {
         HeureSupplementaire::create($date, $heures, $ratioConversion, $idEmploye, $conversionType);
-        return $response->withHeader('Location', '/heuresupp-manage-page')->withStatus(302);
+        return $response->withHeader('Location', '/overtimes')->withStatus(302);
     } catch (\Exception $e) {
         $_SESSION['error'] = $e->getMessage();
-        return $this->view->render($response, 'form-heure-supp.php');
+        return $this->view->render($response, 'form-overtime.php');
     }
     }
 
@@ -241,7 +249,7 @@ class GestionController extends BaseController {
 
         $heureSupp->validate();
 
-        header('Location: /heuresupp-manage-page');
+        header('Location: /overtimes');
         exit;
     }
 
@@ -260,11 +268,14 @@ class GestionController extends BaseController {
         $heureSupp = HeureSupplementaire::fetchById($idHeureSupp);
         $heureSupp->reject();
 
-        header('Location: /heuresupp-manage-page');
+        header('Location: /overtimes');
         exit;
     }
 
-    public function submitConge(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    /*------------------------------------------------*/
+    /*---------------- GESTION CONGÉS ----------------*/
+    /*------------------------------------------------*/
+    public function submitLeave(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $user = Employe::current();
 
@@ -287,7 +298,7 @@ class GestionController extends BaseController {
 
         try {
             Conge::create($user->idEmploye, $type, $dateDebut, $dateFin, $justification);
-            return $response->withHeader('Location', '/conge-manage-page')->withStatus(302);
+            return $response->withHeader('Location', '/leaves-page')->withStatus(302);
         } catch (\Exception $e) {
             $_SESSION['error'] = $e->getMessage();
             return $this->view->render($response, 'form-add-conge.php', [
@@ -313,7 +324,7 @@ class GestionController extends BaseController {
         $idConge = $args['id'];
         $conge = Conge::fetchById($idConge);
         $conge->validate();
-        header('Location: /conge-manage-page');
+        header('Location: /leaves-page');
         exit;
     }
 
@@ -331,7 +342,7 @@ class GestionController extends BaseController {
         $idConge = $args['id'];
         $conge = Conge::fetchById($idConge);
         $conge->reject();
-        header('Location: /conge-manage-page');
+        header('Location: /leaves-page');
         exit;
     }
 

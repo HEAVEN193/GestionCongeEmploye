@@ -117,7 +117,7 @@ button:hover {
         <br>
 
         <button type="submit" class="btn-add">Envoyer</button>
-        <a href="/heuresupp-manage-page" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
+        <a href="/overtimes" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
 
         <?php
             if(isset($_SESSION['error'])){

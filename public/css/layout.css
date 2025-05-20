@@ -14,8 +14,9 @@
   box-sizing: border-box;
 } */
 html{
-  font-family: Poppins, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* font-family: Poppins, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
   line-height: 1.5rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 body{
   min-height: 100vh;

@@ -346,7 +346,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
         </div>
 
         <?php if (Employe::current() && Employe::current()->getRole()->NomRole != "Administrateur"): ?>
-        <a href="/form-conge">
+        <a href="/form-add-leave">
           <button class="btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
@@ -363,7 +363,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
         <div class="filter-bar">
                 
                 
-                <form method="GET" action="/conge-manage-page">
+                <form method="GET" action="/leaves-page">
                     <div class="filter-group">
                         
                     <!-- Filtre période -->

@@ -79,7 +79,7 @@
 
   <h1>Faire une demande de congé</h1>
 
-  <form action="/demande-conge" method="POST">
+  <form action="/leave-request" method="POST">
     <label for="typeConge">Type de congé :</label>
     <select id="typeConge" name="typeConge" required>
       <option value="vacances">Vacances</option>
@@ -96,7 +96,7 @@
     <textarea id="justification" name="justification" placeholder="Ex : voyage, rendez-vous médical, etc."></textarea>
 
     <button type="submit">Envoyer la demande</button>
-    <a href="/conge-manage-page" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
+    <a href="/leaves-page" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
     <?php
             if(isset($_SESSION['error'])){
                 echo '<div class="alert alert-danger" mb-4 role="alert">' .$_SESSION['error'] . '</div>';

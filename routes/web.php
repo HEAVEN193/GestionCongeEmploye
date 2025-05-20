@@ -17,17 +17,17 @@ $app->get('/employes', [HomeController::class, 'showEmployesPage']);
 $app->get('/form-add-employe', [HomeController::class, 'showAddEmploye']);
 $app->get('/form-update-employe/{id:[0-9]+}', [HomeController::class, 'showUpdateEmploye']);
 
-$app->get('/showDepartement', [HomeController::class, 'showDepartementsPage']);
+$app->get('/departments', [HomeController::class, 'showDepartmentsPage']);
 $app->get('/form-add-departement', [HomeController::class, 'showAddDepartement']);
-
 $app->get('/form-update-departement/{id:[0-9]+}', [HomeController::class, 'showUpdateDepartement']);
-$app->get('/heuresupp-manage-page', [HomeController::class, 'showOvertimePage']);
-$app->get('/conge-manage-page', [HomeController::class, 'showLeavePage']);
-$app->get('/form-conge', [HomeController::class, 'showFormLeave']);
 
-$app->post('/demande-conge', [GestionController::class, 'submitConge']);
+$app->get('/overtimes', [HomeController::class, 'showOvertimePage']);
+$app->get('/leaves-page', [HomeController::class, 'showLeavePage']);
+$app->get('/form-add-leave', [HomeController::class, 'showFormLeave']);
 
-$app->get('/form-heures-supp', [HomeController::class, 'showFormOvertime']);
+$app->post('/leave-request', [GestionController::class, 'submitLeave']);
+
+$app->get('/form-overtime', [HomeController::class, 'showFormOvertime']);
 $app->get('/profil', [HomeController::class, 'showProfilPage']);
 
 $app->post('/newEmploye', [GestionController::class, 'addEmploye']);
@@ -36,10 +36,10 @@ $app->post('/updateEmploye/{id:[0-9]+}', [GestionController::class, 'updateEmplo
 
 
 $app->post('/newDepartement', [GestionController::class, 'addDepartement']);
-$app->get('/deleteDepartement/{id:[0-9]+}', [GestionController::class, 'deleteDepartement']);
+$app->get('/deleteDepartment/{id:[0-9]+}', [GestionController::class, 'deleteDepartment']);
 $app->post('/updateDepartement/{id:[0-9]+}', [GestionController::class, 'updateDepartement']);
 
-$app->post('/heuresupp', [GestionController::class, 'reportHeureSupp']);
+$app->post('/heuresupp', [GestionController::class, 'reportOvertime']);
 
 $app->post('/validerHeureSupp/{id:[0-9]+}', [GestionController::class, 'validateOvertime']);
 $app->post('/refuserHeureSupp/{id:[0-9]+}', [GestionController::class, 'rejectOvertime']);

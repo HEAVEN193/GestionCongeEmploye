@@ -117,7 +117,7 @@ class HomeController extends BaseController {
             )
         };
 
-        return $this->view->render($response, 'employe-manage-page.php', [
+        return $this->view->render($response, 'employes-page.php', [
             'employes' => $employes,
             'departementFiltre' => $deptFilter,
             'roleFiltre' => $roleFilter
@@ -211,7 +211,7 @@ class HomeController extends BaseController {
      * @param array $args
      * @return ResponseInterface
      */
-    public function showDepartementsPage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
+    public function showDepartmentsPage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
         $user = Employe::current();
 
@@ -223,7 +223,7 @@ class HomeController extends BaseController {
             return $response->withHeader('Location', '/')->withStatus(302);
         }
         $departements = Departement::fetchAll();
-        return $this->view->render($response, 'departement-manage-page.php', ['departements' => $departements]);
+        return $this->view->render($response, 'departments-page.php', ['departements' => $departements]);
     }
 
     /*------------------------------------------------*/
@@ -250,7 +250,7 @@ class HomeController extends BaseController {
             'Administrateur' => HeureSupplementaire::fetchAll()
         };
 
-        return $this->view->render($response, 'heureSupp-manage-page.php', [
+        return $this->view->render($response, 'overtimes-page.php', [
             'heuresSupp' => $heuresSupp,
         ]);
     }
@@ -268,7 +268,7 @@ class HomeController extends BaseController {
         if (!$user || $user->getRole()->NomRole === 'Administrateur') {
             return $response->withHeader('Location', '/')->withStatus(302);
         }
-        return $this->view->render($response, 'form-heure-supp.php');
+        return $this->view->render($response, 'form-overtime.php');
     }
 
     /*------------------------------------------------*/
@@ -331,7 +331,7 @@ class HomeController extends BaseController {
         else {
             $conges = Conge::fetchByEmployeId($employe->idEmploye); // employé -> que les siennes
         }
-        return $this->view->render($response, 'conge-manage-page.php', [
+        return $this->view->render($response, 'leaves-page.php', [
             'conges' => $conges,
             'departementFiltre' => $filterDepartement,
             'typeFiltre' => $filterType
@@ -352,7 +352,7 @@ class HomeController extends BaseController {
         if (!$user || $user->getRole()->NomRole === 'Administrateur') {
             return $response->withHeader('Location', '/')->withStatus(302);
         }
-        return $this->view->render($response, 'form-add-conge.php');
+        return $this->view->render($response, 'form-add-leave.php');
     }
 
     /*------------------------------------------------*/

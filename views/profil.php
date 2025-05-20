@@ -327,7 +327,7 @@
                         Membre dévoué de l'équipe travaillant en collaboration avec ses collègues pour atteindre les objectifs du projet et de l'entreprise.
                     </p>
                 </div>
-                <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
+                <?php if (Employe::current() && Employe::current()->getRole()->NomRole != "Administrateur"): ?>
                 
                 <div class="stats-grid">
                     <div class="stats-card">

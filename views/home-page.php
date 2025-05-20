@@ -12,7 +12,6 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendrier</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="styles.css"> -->
      <style>
 :root {
     --color-primary: #3B82F6;
@@ -35,6 +34,7 @@ html * {
 body {
     background-color: var(--color-gray-100);
 }
+
 h1{
     font-size: 1.5rem;
     font-weight: 600;
@@ -460,7 +460,7 @@ h1{
                 </div>
             </div>
         </header>
-        <?php if (Employe::current() && Employe::current()->getRole()->NomRole == "Employe"): ?>
+        <?php if (Employe::current() && Employe::current()->getRole()->NomRole != "Administrateur"): ?>
         <!-- Carte des congés en attente -->
          <div class="cards-container">
             <div class="card pending-card">
