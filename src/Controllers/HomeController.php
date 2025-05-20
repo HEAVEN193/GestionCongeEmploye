@@ -32,6 +32,8 @@ class HomeController extends BaseController {
     
         $query = $request->getQueryParams();
         $deptFilter = $query['departement'] ?? null;
+        $employeFilter = $query['employe'] ?? null;
+
     
         // Récupération initiale des congés selon le rôle
         $conges = match ($user->getRole()->NomRole) {
@@ -43,6 +45,12 @@ class HomeController extends BaseController {
         // Filtrage manuel si admin et un filtre est défini
         if ($user->getRole()->NomRole === 'Administrateur' && $deptFilter) {
             $conges = array_filter($conges, fn($c) => $c->getEmploye()->idDepartement == $deptFilter);
+        }
+
+        if ($user->getRole()->NomRole === 'Administrateur' && $employeFilter) {
+            $conges = array_filter($conges, function ($conge) use ($employeFilter) {
+                return $conge->getEmploye()->idEmploye == $employeFilter;
+            });
         }
     
         // Génération des événements
@@ -61,25 +69,13 @@ class HomeController extends BaseController {
     
         return $this->view->render($response, 'home-page.php', [
             'eventsFromPHP' => $events,
-            'departementFiltre' => $deptFilter
+            'departementFiltre' => $deptFilter,
+            'employeFiltre' => $employeFilter
         ]);
     }
 
   
-    /**
-     * Affiche la page de profil de l'utilisateur courant.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param array $args
-     * @return ResponseInterface
-     */
-    public function showProfilPage(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
-    {
-        $user = Employe::current();
-        if (!$user) return $response->withHeader('Location', '/login')->withStatus(302);
-        return $this->view->render($response, 'profil.php');
-    }
+
 
     /**
      * Affiche le layout de base (non protégé).

@@ -22,7 +22,8 @@ body{
   min-height: 100vh;
   min-height: 100dvh;
   background-color: var(--base-clr);
-  color: var(--text-clr);
+  /* color: var(--text-clr); */
+  color: black;
   display: grid;
   grid-template-columns: auto 1fr;
   /* overflow: hidden; */
@@ -55,6 +56,7 @@ body{
   margin-bottom: 16px;
   .logo{
     font-weight: 600;
+    color: black;
   }
 }
 #sidebar ul li.active a{

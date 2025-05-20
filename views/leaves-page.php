@@ -476,7 +476,7 @@ use Matteomcr\GestionCongeEmploye\Models\Conge;
                 <?php if ($conge->Statut === 'En attente'): ?>
             
                   <form action="/handle-leave-request/<?= $conge->idConge ?>" method="POST" style="display:inline;">
-                      <textarea name="commentaire" placeholder="Commentaire..." class="form-control mb-1" rows="1" required></textarea>
+                      <textarea name="commentaire" placeholder="Commentaire..." class="form-control mb-1" rows="1"></textarea>
 
                       <!-- Champ caché pour connaître l'action choisie -->
                       <input type="hidden" name="action" value="" id="action-<?= $conge->idConge ?>">
