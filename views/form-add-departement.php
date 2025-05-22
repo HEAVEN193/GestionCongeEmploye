@@ -11,10 +11,8 @@
             padding:0;
         }
    body {
-    /* font-family: Arial, sans-serif; */
     margin: 0;
     background-color: #f4f4f4;
-    /* padding: 20px; */
 }
 
 .navbar {
@@ -67,7 +65,7 @@ input[type="email"]{
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box; /* Ajoute le padding et la bordure à la largeur totale */
+    box-sizing: border-box; 
 }
 
 button {
@@ -85,7 +83,6 @@ button:hover {
     background-color: #45a049;
 }
 
-/* Style additionnel pour les erreurs de formulaire, si nécessaire */
 .error {
     color: #f44336; /* Rouge */
     font-size: 0.875em;

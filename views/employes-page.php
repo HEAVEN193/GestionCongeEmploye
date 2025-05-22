@@ -475,7 +475,6 @@ tr:hover {
                             </td>
                             <?php endif; ?>
                         </tr>
-                        <!-- More employee rows would be dynamically added here -->
                         <?php endforeach; ?>
                     </tbody>
                 </table>
